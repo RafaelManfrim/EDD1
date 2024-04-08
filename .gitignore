@@ -1,0 +1,14 @@
+# Removendo os arquivos binários
+*
+!/**/
+!*.*
+
+# Removendo os arquivos de build
+cmake-build-debug/
+
+# Removendo os arquivos de configuração vscode
+.vscode/
+
+# Removendo os arquivos de configuração do CLion
+.cmake/
+.idea/
