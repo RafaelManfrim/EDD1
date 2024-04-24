@@ -1,5 +1,12 @@
 #include <iostream>
 #include <random>
+#include <locale>
+#include <unistd.h>
+//#include <fstream>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 using namespace std;
 
@@ -297,16 +304,16 @@ Character create_bot_character(NamesStack (&character_names)[NUMBER_OF_CLASSES])
 
     switch (class_id_draw) {
         case Guerreiro:
-            life = 3;
+            life = 2;
             attack = 3;
             defense = 3;
-            luck = 1;
+            luck = 2;
             break;
         case Ladrao:
             life = 2;
-            attack = 4;
+            attack = 5;
             defense = 1;
-            luck = 3;
+            luck = 2;
             break;
         case Arqueiro:
             life = 1;
@@ -315,16 +322,16 @@ Character create_bot_character(NamesStack (&character_names)[NUMBER_OF_CLASSES])
             luck = 1;
             break;
         case Berseker:
-            life = 4;
-            attack = 4;
+            life = 3;
+            attack = 5;
             defense = 1;
             luck = 1;
             break;
         case Feiticeiro:
-            life = 2;
-            attack = 3;
+            life = 3;
+            attack = 4;
             defense = 1;
-            luck = 5;
+            luck = 2;
             break;
         case Tanque:
             life = 4;
@@ -334,9 +341,9 @@ Character create_bot_character(NamesStack (&character_names)[NUMBER_OF_CLASSES])
             break;
         case Cacador:
             life = 1;
-            attack = 4;
+            attack = 3;
             defense = 4;
-            luck = 1;
+            luck = 2;
             break;
         case Necromante:
             life = 5;
@@ -359,55 +366,437 @@ void list_characters(Character* &characters, int &number_of_characters) {
     }
 }
 
+void calculaProbabilidadeDanoRandomico(Character &atacante, int &a, int &b) {
+    switch(atacante.luck) {
+        case 0:
+            a = 7;
+            b = 14;
+            break;
+        case 1:
+            a = 8;
+            b = 14;
+            break;
+        case 2:
+            a = 8;
+            b = 15;
+            break;
+        case 3:
+            a = 9;
+            b = 15;
+            break;
+        case 4:
+            a = 9;
+            b = 16;
+            break;
+        case 5:
+            a = 10;
+            b = 16;
+            break;
+        case 6:
+            a = 10;
+            b = 17;
+            break;
+        case 7:
+            a = 11;
+            b = 17;
+            break;
+        case 8:
+            a = 11;
+            b = 18;
+            break;
+        case 9:
+            a = 12;
+            b = 18;
+            break;
+        case 10:
+            a = 12;
+            b = 19;
+            break;
+        default:
+            a = 7;
+            b = 17;
+            break;
+    }
+}
+
+void calculaProbabilidadeAtaqueEspecial(Character &atacante, int &a, int &b) {
+    switch(atacante.luck) {
+        case 0:
+            a = 0;
+            b = 14;
+            break;
+        case 1:
+            a = 0;
+            b = 13;
+            break;
+        case 2:
+            a = 0;
+            b = 12;
+            break;
+        case 3:
+            a = 0;
+            b = 11;
+            break;
+        case 4:
+            a = 0;
+            b = 10;
+            break;
+        case 5:
+            a = 0;
+            b = 9;
+            break;
+        case 6:
+            a = 0;
+            b = 8;
+            break;
+        case 7:
+            a = 0;
+            b = 7;
+            break;
+        case 8:
+            a = 0;
+            b = 6;
+            break;
+        case 9:
+            a = 0;
+            b = 5;
+            break;
+        case 10:
+            a = 0;
+            b = 4;
+            break;
+        default:
+            a = 0;
+            b = 15;
+            break;
+    }
+}
+
+void calculaProbabilidadeDesvio(Character &defensor, int &a, int &b) {
+    switch(defensor.luck) {
+        case 0:
+            a = 0;
+            b = 14;
+            break;
+        case 1:
+            a = 0;
+            b = 13;
+            break;
+        case 2:
+            a = 0;
+            b = 12;
+            break;
+        case 3:
+            a = 0;
+            b = 11;
+            break;
+        case 4:
+            a = 0;
+            b = 10;
+            break;
+        case 5:
+            a = 0;
+            b = 9;
+            break;
+        case 6:
+            a = 0;
+            b = 8;
+            break;
+        case 7:
+            a = 0;
+            b = 7;
+            break;
+        case 8:
+            a = 0;
+            b = 6;
+            break;
+        case 9:
+            a = 0;
+            b = 5;
+            break;
+        case 10:
+            a = 0;
+            b = 4;
+            break;
+        default:
+            a = 0;
+            b = 15;
+            break;
+    }
+
+    if (defensor.character_class == Arqueiro) { // Medida para maior balanceamento
+        b -= 3;
+    }
+}
+
+void ataque(
+    Character &atacante,
+    Character &defensor,
+    int &danoAtacante,
+    int &vidaDefensor,
+    int &qtdeAtaqueEspecial,
+    int &qtdeEsquivas,
+    int &tempoSangramentoDefensor
+    ) {
+    random_device generator;
+    int a, b;
+
+    calculaProbabilidadeDesvio(defensor, a, b);
+    uniform_int_distribution<int> Possib_desvio(a,b);
+    int desvioOcorre = Possib_desvio(generator);
+    if(desvioOcorre == 0) {
+        qtdeEsquivas++;
+        cout << atacante.nickname << " ataca: " << endl << defensor.nickname << " desviou..." << endl;
+        sleep(1);
+        return;
+    }
+
+    calculaProbabilidadeDanoRandomico(atacante, a, b);
+    uniform_int_distribution<int> Possib_danoRandomico(a,b);
+    int DanoRandomico = Possib_danoRandomico(generator);
+    int danoAtaque = 15 + atacante.attack * 5 - defensor.defense * 5 + DanoRandomico;
+
+    if(defensor.character_class == Tanque) { // Regra para balancear
+        danoAtaque -= 1;
+    } else if(defensor.character_class == Berseker) {
+        danoAtaque += 2;
+    }
+
+    calculaProbabilidadeAtaqueEspecial(atacante, a, b);
+    uniform_int_distribution<int> Possib_ataqueEspecial(a,b);
+    int ataqueEspecialOcorre = Possib_ataqueEspecial(generator);
+
+    if(ataqueEspecialOcorre == 0) {
+        qtdeAtaqueEspecial++;
+        cout << atacante.nickname << " está usando o ataque " << atacante.special_attack << endl;
+        sleep(1);
+        danoAtaque = ceil(danoAtaque + danoAtaque * 0.4);
+
+        uniform_int_distribution<int> Possib_sangramento(0,2);
+        int resultadoSangramento = Possib_sangramento(generator);
+        if(resultadoSangramento == 0) {
+            uniform_int_distribution<int> Possib_TurnoSangramento(2,6);
+            int turnoSangramento = Possib_TurnoSangramento(generator);
+            cout << "O ataque especial causou sangramento de: " << turnoSangramento << " turnos" << endl;
+            sleep(1);
+            tempoSangramentoDefensor += turnoSangramento;
+        }
+    } else {
+        cout << atacante.nickname << " ataca: " << endl;
+        sleep(1);
+    }
+
+    vidaDefensor -= danoAtaque;
+    danoAtacante += danoAtaque;
+}
+
 Character combat(Character &fighter1, Character &fighter2) {
     cout << fighter1.nickname << "(" << character_class_name(fighter1.character_class) << ")";
     cout << " x ";
     cout << fighter2.nickname << "(" << character_class_name(fighter2.character_class) << ")" << endl;
 
-    // Poderá durar no máximo 10 turnos. Se nenhum dos dois personagens forem derrotados ao
-    // fim dos 10, o personagem que causou mais dano será considerado o vencedor.
+    random_device generator;
+    uniform_int_distribution<int> ataquePersonagem(1,2);
 
-    // O sangramento deve ser calculado no início de cada turno, portanto, um personagem pode ser derrotado
-    // sem receber dano de ataque no turno.
+    int turno = 1;
+    int danoPersonagem1 = 0, danoPersonagem2 = 0;
+    int vidaPersonagem1 = 100 + fighter1.life * 20, vidaPersonagem2 = 100 + fighter2.life * 20;
+    int tempoSangramentoPersonagem1 = 0, tempoSangramentoPersonagem2 = 0;
+    int qtdeEsquivas = 0, qtdeAtaqueEspecial = 0;
+    int personagemVitorioso = 0;
+    while (turno <= 10){
+        cout << "Turno " << turno << " --------------------------- " << endl;
+        int personagem_atacar = ataquePersonagem(generator);
+        if(personagem_atacar == 1) {
+            if(tempoSangramentoPersonagem2 > 0) {
+                int danoSangramento = ceil(vidaPersonagem2 * 0.05 + fighter1.attack * 2);
+                cout << fighter2.nickname << " recebeu " << danoSangramento << " de dano de sangramento." << endl;
+                sleep(1);
+                vidaPersonagem2 -= danoSangramento;
+                tempoSangramentoPersonagem2--;
 
-    // Caso ambos os personagens fiquem sem vida devido a sangrarem no início do turno, um dos dois
-    // personagens será sorteado para avançar e o outro será considerado derrotado.
+                cout << "Vida restante de " << fighter2.nickname << ": " << vidaPersonagem2 << endl;
 
-    // Cada personagem ataca por vez, e será sorteado quem será o primeiro a atacar.
+                if(vidaPersonagem2 <= 0) {
+                    cout << fighter1.nickname << " venceu!!!" << endl;
+                    sleep(1);
+                    personagemVitorioso = 1;
+                    break;
+                }
+            } else if(tempoSangramentoPersonagem1 > 0) {
+                int danoSangramento = ceil(vidaPersonagem1 * 0.05 + fighter2.attack * 2);
+                cout << fighter1.nickname << " recebeu " << danoSangramento << " de dano de sangramento." << endl;
+                sleep(1);
+                vidaPersonagem1 -= danoSangramento;
+                tempoSangramentoPersonagem1--;
 
-    // Cada personagem atacará uma vez por turno. Ou seja, ambos os personagens atacam em um turno, a não
-    // ser que um deles seja derrotado.
+                cout << "Vida restante de " << fighter1.nickname << ": " << vidaPersonagem1 << endl;
 
-    // O ataque especial poderá ocorrer aleatoriamente durante um turno de combate. Ou seja, em vez do ataque normal,
-    // ocorrerá o ataque especial. Este ataque causará mais dano do que um ataque normal.
+                if(vidaPersonagem1 <= 0) {
+                    cout << fighter2.nickname << " venceu!!!" << endl;
+                    sleep(1);
+                    personagemVitorioso = 2;
+                    break;
+                }
+            }
 
-    // O ataque especial também poderá causar sangramento, onde o outro personagem sangrará por um número
-    // de turnos calculado aleatoriamente (mínimo de 2 turnos, máximo de 6). O sangramento causará
-    // uma perda (pequena) de vida a cada turno, independente do dano recebido no turno.
+            ataque(
+                fighter1,
+                fighter2,
+                danoPersonagem1,
+                vidaPersonagem2,
+                qtdeAtaqueEspecial,
+                qtdeEsquivas,
+                tempoSangramentoPersonagem2
+                );
 
-    // Reduza os pontos de vida do alvo considerando o ATQ de quem
-    // ataca, a DEF de quem defende, e um número sorteado (RND) que influenciará neste cálculo.
+            cout << "Vida restante de " << fighter2.nickname << ": " << vidaPersonagem2 << endl;
 
-    // Se um personagem ficar com VID zero ou menos, ele é derrotado e removido do jogo.
+            if(vidaPersonagem2 <= 0) {
+                cout << fighter1.nickname << " venceu!!!" << endl;
+                sleep(1);
+                personagemVitorioso = 1;
+                break;
+            }
 
-    // Ao fim de cada combate seu jogo deve exibir uma tabela com as estatísticas do combate, considerando
-    // dano efetuado por cada personagem, vida restante de cada personagem, número de rounds ocorridos, e
-    // quantos ataques especiais ocorreram.
+            ataque(
+                fighter2,
+                fighter1,
+                danoPersonagem2,
+                vidaPersonagem1,
+                qtdeAtaqueEspecial,
+                qtdeEsquivas,
+                tempoSangramentoPersonagem1
+                );
 
-    cout << "O personagem " << fighter1.nickname << " venceu!!!" << endl;
+            cout << "Vida restante de " << fighter1.nickname << ": " << vidaPersonagem1 << endl;
 
-    Character *temp = new Character[fighter1.num_defeated_characters + 1];
+            if(vidaPersonagem1 <= 0) {
+                cout << fighter2.nickname << " venceu!!!" << endl;
+                sleep(1);
+                personagemVitorioso = 2;
+                break;
+            }
+        } else if(personagem_atacar == 2) {
+            if(tempoSangramentoPersonagem1 > 0) {
+                int danoSangramento = ceil(vidaPersonagem1 * 0.05 + fighter2.attack * 2);
+                cout << fighter1.nickname << " recebeu " << danoSangramento << " de dano de sangramento." << endl;
+                sleep(1);
+                vidaPersonagem1 -= danoSangramento;
+                tempoSangramentoPersonagem1--;
 
-    for (int i = 0; i < fighter1.num_defeated_characters; i++) {
-        temp[i] = fighter1.defeated_characters[i];
+                cout << "Vida restante de " << fighter1.nickname << ": " << vidaPersonagem1 << endl;
+
+                if(vidaPersonagem1 <= 0) {
+                    cout << fighter2.nickname << " venceu!!!" << endl;
+                    sleep(1);
+                    personagemVitorioso = 2;
+                    break;
+                }
+
+            } else if(tempoSangramentoPersonagem2 > 0) {
+                int danoSangramento = ceil(vidaPersonagem2 * 0.05 + fighter1.attack * 2);
+                cout << "O personagem " << fighter2.nickname << " recebeu " << danoSangramento << " de dano de sangramento." << endl;
+                sleep(1);
+                vidaPersonagem2 -= danoSangramento;
+                tempoSangramentoPersonagem2--;
+
+                cout << "Vida restante de " << fighter2.nickname << ": " << vidaPersonagem2 << endl;
+
+                if(vidaPersonagem2 <= 0) {
+                    cout << fighter1.nickname << " venceu!!!" << endl;
+                    sleep(1);
+                    personagemVitorioso = 1;
+                    break;
+                }
+            }
+
+
+            ataque(
+                fighter2,
+                fighter1,
+                danoPersonagem2,
+                vidaPersonagem1,
+                qtdeAtaqueEspecial,
+                qtdeEsquivas,
+                tempoSangramentoPersonagem1
+                );
+
+            cout << "Vida restante de " << fighter1.nickname << ": " << vidaPersonagem1 << endl;
+
+            if(vidaPersonagem1 <= 0) {
+                cout << fighter2.nickname << " venceu!!!" << endl;
+                sleep(1);
+                personagemVitorioso = 2;
+                break;
+            }
+
+            ataque(
+                fighter1,
+                fighter2,
+                danoPersonagem1,
+                vidaPersonagem2,
+                qtdeAtaqueEspecial,
+                qtdeEsquivas,
+                tempoSangramentoPersonagem2
+                );
+
+            cout << "Vida restante de " << fighter2.nickname << ": " << vidaPersonagem2 << endl;
+
+            if(vidaPersonagem2 <= 0) {
+                cout << fighter1.nickname << " venceu!!!" << endl;
+                sleep(1);
+                personagemVitorioso = 1;
+                break;
+            }
+        }
+        turno++;
     }
 
-    temp[fighter1.num_defeated_characters] = fighter2;
-    delete[] fighter1.defeated_characters;
-    fighter1.defeated_characters = temp;
-    fighter1.num_defeated_characters++;
+    if(vidaPersonagem1 > 0 && vidaPersonagem2 > 0) {
+        if(danoPersonagem1 > danoPersonagem2) {
+            personagemVitorioso = 1;
+        }
 
-    return fighter1;
+        personagemVitorioso = 2;
+    }
+    cout << endl;
+
+    cout << "Dano " << fighter1.nickname << ": " << danoPersonagem1 << endl;
+    cout << "Dano " << fighter2.nickname << ": " << danoPersonagem2 << endl;
+    cout << "Vida restante " << fighter1.nickname << ": " << vidaPersonagem1 << endl;
+    cout << "Vida restante " << fighter2.nickname << ": " << vidaPersonagem2 << endl;
+    cout << "Turnos ocorridos: " << turno << endl;
+    cout << "Quantidade de ataques especiais: " << qtdeAtaqueEspecial << endl;
+    cout << "Quantidade de esquivas: " << qtdeEsquivas << endl << endl;
+
+    if(personagemVitorioso == 1) {
+        Character *temp = new Character[fighter1.num_defeated_characters + 1];
+
+        for (int i = 0; i < fighter1.num_defeated_characters; i++) {
+            temp[i] = fighter1.defeated_characters[i];
+        }
+
+        temp[fighter1.num_defeated_characters] = fighter2;
+        delete[] fighter1.defeated_characters;
+        fighter1.defeated_characters = temp;
+        fighter1.num_defeated_characters++;
+
+        return fighter1;
+    }
+
+    Character *temp = new Character[fighter2.num_defeated_characters + 1];
+
+    for (int i = 0; i < fighter2.num_defeated_characters; i++) {
+        temp[i] = fighter2.defeated_characters[i];
+    }
+
+    temp[fighter2.num_defeated_characters] = fighter1;
+    delete[] fighter2.defeated_characters;
+    fighter2.defeated_characters = temp;
+    fighter2.num_defeated_characters++;
+
+    return fighter2;
 }
 
 void create_tournament(int size) {
@@ -453,6 +842,9 @@ void create_tournament(int size) {
     for(i = 0; i < size; i++) {
         Character character;
 
+//        CÓDIGO PARA AVALIAÇÃO DO BALANCEAMENTO
+//        character = create_bot_character(character_names);
+
         if (i != 0) {
             character = create_bot_character(character_names);
         } else {
@@ -462,7 +854,7 @@ void create_tournament(int size) {
         characters[i] = character;
     }
 
-    cout << "\033[1m" << "Personagens do Torneio: " << "\033[0m" << endl << endl;
+    cout << "Personagens do Torneio: " << endl << endl;
 
     list_characters(characters, size);
 
@@ -471,7 +863,7 @@ void create_tournament(int size) {
     int max_rounds = ceil(log2(size));
 
     for (int round = 1; round <= max_rounds; round++) {
-        cout << endl << "\033[1m" << "Rodada " << round << ":" << "\033[0m" << endl << endl;
+        cout << endl << "========================= Rodada " << round << " ========================= " << endl << endl << endl;
         int current_round_size = size / static_cast<int>(pow(2, round - 1));
         int next_round_size = size / static_cast<int>(pow(2, round));
 
@@ -492,6 +884,15 @@ void create_tournament(int size) {
 
             cout << endl << endl << "O vencedor do torneio foi: " << endl;
             display_character_statistics(tournament_winner);
+
+// CÓDIGO PARA AVALIAÇÃO DO BALANCEAMENTO
+//            string filename = to_string(size) + ".txt";
+//            std::ofstream arquivo(filename, std::ios_base::app);
+//
+//            if (arquivo.is_open()) {
+//                arquivo << character_class_name(tournament_winner.character_class) << endl;
+//                arquivo.close();
+//            }
         }
     }
 
@@ -499,6 +900,11 @@ void create_tournament(int size) {
 }
 
 int main(){
+    setlocale(LC_ALL, "pt_BR.UTF-8");
+    #ifdef _WIN32
+        SetConsoleOutputCP(CP_UTF8);
+    #endif
+
     int tournament_size = 0;
 
     while(true) {
@@ -513,4 +919,13 @@ int main(){
             cout << "Informe um tamanho válido!" << endl;
         }
     }
+
+// CÓDIGO PARA AVALIAÇÃO DO BALANCEAMENTO
+//    for(int i = 8; i <= 32; i+=8){
+//        for (int j = 1; j <= 15000; j++) {
+//            if(i != 24) {
+//                create_tournament(i);
+//            }
+//        }
+//    }
 }
