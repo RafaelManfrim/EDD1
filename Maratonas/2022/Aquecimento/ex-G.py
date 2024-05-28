@@ -1,6 +1,4 @@
-import sys
-
-numero = int(sys.argv[1])
+numero = int(input())
 
 soma_pares = 0
 soma_impares = 0
