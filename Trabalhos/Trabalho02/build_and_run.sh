@@ -10,7 +10,7 @@ cmake ..
 make
 
 # Executar o jogo
-./meu_jogo
+./rpg-sfml-ed
 
 # Voltar ao diretório original
 cd ..
