@@ -2,62 +2,46 @@
 
 #include <SFML/Graphics.hpp>
 
-#ifndef EDD1_PLAYER_H
-#define EDD1_PLAYER_H
-
-//enum PLAYER_ANIMATION_STATES {IDLE = 0, MOVING_LEFT, MOVING_RIGHT, JUMPING, FALLING};
+enum PLAYER_ANIMATION_STATES {IDLE = 0, MOVING_LEFT, MOVING_RIGHT};
 
 class Player {
 private:
     sf::Sprite sprite;
     sf::Texture textureSheet;
-//    sf::Clock animationTimer;
+    sf::Clock animationTimer;
 
-//    short animState;
-//    sf::IntRect currentFrame;
-//    bool animationSwitch;
+    short animState;
+    sf::IntRect currentFrame;
+    bool animationSwitch;
 
-//    sf::Vector2f velocity;
-//    float velocityMax;
-//    float velocityMin;
-//    float acceleration;
-//    float drag;
-//    float gravity;
-//    float velocityMaxY;
-//    bool canJump;
-//
-//    void initVariables();
+    sf::Vector2f velocity;
+    float velocityMax;
+    float velocityMin;
+    float acceleration;
+    float drag;
+
+    void initVariables();
     void initTexture();
     void initSprite();
-//    void initAnimations();
-//    void initPhysics();
+    void initAnimations();
+    void initPhysics();
 
 public:
     Player();
     virtual ~Player();
 
-//    //Accessors
-//    const bool& getAnimSwitch();
-//    const sf::Vector2f getPosition() const;
-//    const sf::FloatRect getGlobalBounds() const;
-//
-//    //Inline functions
-//    inline const bool& getCanJump() const { return this->canJump; }
-//    inline void setCanJump(const bool canJump) { this->canJump = canJump; }
-//
-//    //Modifiers
-//    void setPosition(const float x, const float y);
-//    void resetVelocityY();
-//
-//    //Functions
-//    void resetAnimationTimer();
-//    void move(const float dir_x, const float dir_y);
-//    void jump();
-//    void updatePhysics();
-//    void updateMovement();
-//    void updateAnimations();
+
+    bool getAnimSwitch();
+    const sf::Vector2f getPosition() const;
+    const sf::FloatRect getGlobalBounds() const;
+
+    void setPosition(const float x, const float y);
+
+    void resetAnimationTimer();
+    void move(const float dir_x);
+    void updatePhysics();
+    void updateMovement();
+    void updateAnimations();
     void update();
     void render(sf::RenderTarget& target);
 };
-
-#endif //EDD1_PLAYER_H
