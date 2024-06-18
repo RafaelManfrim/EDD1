@@ -34,27 +34,21 @@ void AtributesMenu::set_values(){
 
     bg->setTexture(*image);
 
-    options = {"Selecione o genero", "Masculino", "Feminino"};
-    texts.resize(3);
-    coords = {{400, 114}, {480,282},{495,430}};
-    sizes = {48, 64, 64};
+    labels = {"Distribua seus atributos", "Vida", "Ataque", "Defesa", "Sorte"};
+    labels_texts.resize(5);
+    labels_coords = {{400, 48}, {460,175},{445,262},{445,358},{455,448}};
+    labels_sizes = {36, 56, 56, 56, 56};
 
-    for (std::size_t i{}; i < texts.size(); ++i){
-        if(i == 0){
-            texts[i].setColor(sf::Color::Black);
-        }
-
-        texts[i].setFont(*font);
-        texts[i].setString(options[i]);
-        texts[i].setCharacterSize(sizes[i]);
-        texts[i].setOutlineColor(sf::Color::Black);
-        texts[i].setPosition(coords[i]);
+    for (std::size_t i{}; i < labels_texts.size(); ++i){
+        labels_texts[i].setColor(sf::Color::Black);
+        labels_texts[i].setFont(*font);
+        labels_texts[i].setString(labels[i]);
+        labels_texts[i].setCharacterSize(labels_sizes[i]);
+        labels_texts[i].setOutlineColor(sf::Color::Black);
+        labels_texts[i].setPosition(labels_coords[i]);
     }
 
     pos = 1;
-
-    texts[pos].setOutlineThickness(4);
-    texts[pos].setOutlineColor(sf::Color::Red);
 }
 
 void AtributesMenu::loop_events(){
@@ -64,29 +58,29 @@ void AtributesMenu::loop_events(){
             window.close();
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S) && !pressed){
-            if(pos < 2){
-                ++pos;
-                pressed = true;
-                texts[pos].setOutlineThickness(4);
-                texts[pos].setOutlineColor(sf::Color::Red);
-                texts[pos - 1].setOutlineThickness(0);
-                pressed = false;
-                theselect = false;
-            }
-        }
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !pressed){
-            if(pos > 1){
-                --pos;
-                pressed = true;
-                texts[pos].setOutlineThickness(4);
-                texts[pos].setOutlineColor(sf::Color::Red);
-                texts[pos + 1].setOutlineThickness(0);
-                pressed = false;
-                theselect = false;
-            }
-        }
+//        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S) && !pressed){
+//            if(pos < 2){
+//                ++pos;
+//                pressed = true;
+//                texts[pos].setOutlineThickness(4);
+//                texts[pos].setOutlineColor(sf::Color::Red);
+//                texts[pos - 1].setOutlineThickness(0);
+//                pressed = false;
+//                theselect = false;
+//            }
+//        }
+//
+//        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !pressed){
+//            if(pos > 1){
+//                --pos;
+//                pressed = true;
+//                texts[pos].setOutlineThickness(4);
+//                texts[pos].setOutlineColor(sf::Color::Red);
+//                texts[pos + 1].setOutlineThickness(0);
+//                pressed = false;
+//                theselect = false;
+//            }
+//        }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && !theselect){
             theselect = true;
@@ -98,7 +92,7 @@ void AtributesMenu::loop_events(){
 void AtributesMenu::draw_all(){
     window.clear();
     window.draw(*bg);
-    for(auto t : texts) {
+    for(auto t : labels_texts) {
         window.draw(t);
     }
     window.display();
