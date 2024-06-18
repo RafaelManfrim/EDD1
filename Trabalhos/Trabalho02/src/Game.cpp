@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "../headers/Game.h"
-#include "../headers/Util.h"
 #include "../headers/Menu.h"
 #include "../headers/DifficultyMenu.h"
 #include "../headers/GenderMenu.h"
