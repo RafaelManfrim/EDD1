@@ -1,10 +1,11 @@
 #include <iostream>
 
 #include "../headers/Game.h"
+#include "../headers/Util.h"
 #include "../headers/Menu.h"
 #include "../headers/DifficultyMenu.h"
 #include "../headers/GenderMenu.h"
-#include "../headers/AtributesMenu.h"
+#include "../headers/AttributesMenu.h"
 
 void Game::initWindow() {
     this->window.create(sf::VideoMode(1280, 720), "ED - T2", sf::Style::Close | sf::Style::Titlebar);
@@ -22,22 +23,24 @@ void Game::initPlayer() {
 }
 
 Game::Game() {
+    this->util = new Util();
+
     this->initWindow();
     this->initInput();
 
-    Menu * menu = new Menu(this->window);
+    Menu * menu = new Menu(this->window, this->util);
     menu->run_menu();
     delete menu;
     menu = nullptr;
 
     this->difficulty = 1;
 
-    auto * difficultyMenu = new DifficultyMenu(this->window, this->difficulty);
+    auto * difficultyMenu = new DifficultyMenu(this->window, this->util, this->difficulty);
     difficultyMenu->run_menu();
     delete difficultyMenu;
     difficultyMenu = nullptr;
 
-    auto * genderMenu = new GenderMenu(this->window, this->gender);
+    auto * genderMenu = new GenderMenu(this->window, this->util, this->gender);
     genderMenu->run_menu();
     delete genderMenu;
     genderMenu = nullptr;
@@ -47,16 +50,17 @@ Game::Game() {
     this->defense = 0;
     this->luck = 0;
 
-    auto * atributesMenu = new AtributesMenu(this->window, this->life, this->attack, this->defense, this->luck);
-    atributesMenu->run_menu();
-    delete atributesMenu;
-    atributesMenu = nullptr;
+    auto * attributesMenu = new AttributesMenu(this->window, this->util, this->life, this->attack, this->defense, this->luck);
+    attributesMenu->run_menu();
+    delete attributesMenu;
+    attributesMenu = nullptr;
 
     this->initPlayer();
 }
 
 Game::~Game() {
     delete this->player;
+    delete this->util;
 //    delete this->tileMap;
 }
 

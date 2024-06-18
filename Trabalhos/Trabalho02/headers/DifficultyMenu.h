@@ -1,16 +1,20 @@
 #pragma once
 
+#include "./Util.h"
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
 class DifficultyMenu {
 
 public:
-    DifficultyMenu(sf::RenderWindow &window, int &difficulty);
+    DifficultyMenu(sf::RenderWindow &window, Util* util, int &difficulty);
     ~DifficultyMenu();
 
     int pos, &difficulty;
     bool pressed, theselect;
+
+    Util* util;
 
     sf::RenderWindow &window;
     sf::Font * font;

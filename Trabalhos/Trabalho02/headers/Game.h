@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../headers/Player.h"
+#include "../headers/Util.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -34,6 +35,8 @@ private:
 public:
     Game();
     virtual ~Game();
+
+    Util* util;
 
     int difficulty;
     int gender, life, attack, defense, luck;

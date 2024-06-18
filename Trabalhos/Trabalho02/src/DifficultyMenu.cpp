@@ -1,10 +1,12 @@
 #include "../headers/DifficultyMenu.h"
 
-DifficultyMenu::DifficultyMenu(sf::RenderWindow &window, int &difficulty): window(window), difficulty(difficulty), isOpen(true) {
+DifficultyMenu::DifficultyMenu(sf::RenderWindow &window, Util* util, int &difficulty): window(window), util(util), difficulty(difficulty), isOpen(true) {
     font = new sf::Font();
     buttonFont = new sf::Font();
     image = new sf::Texture();
     bg = new sf::Sprite();
+    pos = 0;
+    pressed = theselect = false;
 
     set_values();
 }
@@ -21,9 +23,6 @@ void DifficultyMenu::close() {
 }
 
 void DifficultyMenu::set_values(){
-    pos = 0;
-    pressed = theselect = false;
-
     if (!image->loadFromFile("../assets/sprites/menu/menu-difficulty.png")) {
         std::cout << "ERRO::MENU::Não foi possível carregar o background do menu!" << "\n";
     }
@@ -92,7 +91,7 @@ void DifficultyMenu::loop_events(){
             }
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && !theselect){
+        if(util->isKeyPressed(sf::Keyboard::Enter) && !theselect){
             theselect = true;
             difficulty = pos;
             close();

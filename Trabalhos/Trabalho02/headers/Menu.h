@@ -1,13 +1,17 @@
 #pragma once
 
+#include "./Util.h"
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
 class Menu {
 
 public:
-    Menu(sf::RenderWindow &window);
+    Menu(sf::RenderWindow &window, Util* util);
     ~Menu();
+
+    Util* util;
 
     int pos;
     bool pressed, theselect;

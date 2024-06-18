@@ -1,7 +1,7 @@
-#include "../headers/AtributesMenu.h"
+#include "../headers/AttributesMenu.h"
 
-AtributesMenu::AtributesMenu(sf::RenderWindow &window, int &life, int &attack, int &defense, int &luck):
-window(window), life(life), attack(attack), defense(defense), luck(luck), isOpen(true) {
+AttributesMenu::AttributesMenu(sf::RenderWindow &window, Util* util, int &life, int &attack, int &defense, int &luck):
+window(window), util(util), life(life), attack(attack), defense(defense), luck(luck), isOpen(true) {
     font = new sf::Font();
     image = new sf::Texture();
     bg = new sf::Sprite();
@@ -10,17 +10,17 @@ window(window), life(life), attack(attack), defense(defense), luck(luck), isOpen
     set_values();
 }
 
-AtributesMenu::~AtributesMenu(){
+AttributesMenu::~AttributesMenu(){
     delete font;
     delete image;
     delete bg;
 }
 
-void AtributesMenu::close() {
+void AttributesMenu::close() {
     isOpen = false;
 }
 
-void AtributesMenu::set_values(){
+void AttributesMenu::set_values(){
     pos = 0;
     pressed = theselect = false;
 
@@ -51,7 +51,7 @@ void AtributesMenu::set_values(){
     pos = 1;
 }
 
-void AtributesMenu::loop_events(){
+void AttributesMenu::loop_events(){
     sf::Event event;
     while(window.pollEvent(event)){
         if(event.type == sf::Event::Closed){
@@ -82,14 +82,14 @@ void AtributesMenu::loop_events(){
 //            }
 //        }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && !theselect){
+        if(util->isKeyPressed(sf::Keyboard::Enter) && !theselect){
             theselect = true;
             close();
         }
     }
 }
 
-void AtributesMenu::draw_all(){
+void AttributesMenu::draw_all(){
     window.clear();
     window.draw(*bg);
     for(auto t : labels_texts) {
@@ -98,7 +98,7 @@ void AtributesMenu::draw_all(){
     window.display();
 }
 
-void AtributesMenu::run_menu(){
+void AttributesMenu::run_menu(){
     while(window.isOpen() && isOpen){
         loop_events();
         draw_all();

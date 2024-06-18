@@ -3,11 +3,15 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-class AtributesMenu {
+#include "./Util.h"
+
+class AttributesMenu {
 
 public:
-    AtributesMenu(sf::RenderWindow &window, int &life, int &attack, int &defense, int &luck);
-    ~AtributesMenu();
+    AttributesMenu(sf::RenderWindow &window, Util* util, int &life, int &attack, int &defense, int &luck);
+    ~AttributesMenu();
+
+    Util* util;
 
     int pos, remaining_points, &life, &attack, &defense, &luck;
     bool pressed, theselect;

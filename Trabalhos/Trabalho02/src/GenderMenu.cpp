@@ -1,6 +1,6 @@
 #include "../headers/GenderMenu.h"
 
-GenderMenu::GenderMenu(sf::RenderWindow &window, int &gender): window(window), gender(gender), isOpen(true){
+GenderMenu::GenderMenu(sf::RenderWindow &window, Util* util, int &gender): window(window), util(util), gender(gender), isOpen(true){
     font = new sf::Font();
     image = new sf::Texture();
     bg = new sf::Sprite();
@@ -86,7 +86,7 @@ void GenderMenu::loop_events(){
             }
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && !theselect){
+        if(util->isKeyPressed(sf::Keyboard::Enter) && !theselect){
             theselect = true;
             gender = pos;
             close();

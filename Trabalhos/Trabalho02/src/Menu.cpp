@@ -1,10 +1,13 @@
 #include "../headers/Menu.h"
 
-Menu::Menu(sf::RenderWindow &window): window(window), isOpen(true){
+Menu::Menu(sf::RenderWindow &window, Util* util): window(window), util(util), isOpen(true){
     font = new sf::Font();
     buttonFont = new sf::Font();
     image = new sf::Texture();
     bg = new sf::Sprite();
+
+    pos = 0;
+    pressed = theselect = false;
 
     set_values();
 }
@@ -21,9 +24,6 @@ void Menu::close() {
 }
 
 void Menu::set_values(){
-    pos = 0;
-    pressed = theselect = false;
-
     if (!font->loadFromFile("../assets/fonts/Platinum-Sign-Over.otf")) {
         std::cout << "ERRO::MENU::Não foi possível carregar a fonte!" << "\n";
     }
@@ -95,7 +95,7 @@ void Menu::loop_events(){
             }
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && !theselect){
+        if(util->isKeyPressed(sf::Keyboard::Enter) && !theselect){
             theselect = true;
             if(pos == 1) {
                 close();

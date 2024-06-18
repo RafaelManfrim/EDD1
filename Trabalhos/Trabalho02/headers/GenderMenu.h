@@ -3,11 +3,15 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#include "./Util.h"
+
 class GenderMenu {
 
 public:
-    GenderMenu(sf::RenderWindow &window, int &gender);
+    GenderMenu(sf::RenderWindow &window, Util* util, int &gender);
     ~GenderMenu();
+
+    Util* util;
 
     int pos, &gender;
     bool pressed, theselect;
