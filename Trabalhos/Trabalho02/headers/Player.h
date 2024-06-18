@@ -27,9 +27,10 @@ private:
     void initPhysics();
 
 public:
-    Player();
+    Player(int &gender);
     virtual ~Player();
 
+    int &gender;
 
     bool getAnimSwitch();
     const sf::Vector2f getPosition() const;

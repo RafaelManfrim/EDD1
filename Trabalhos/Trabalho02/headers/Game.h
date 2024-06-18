@@ -10,6 +10,11 @@ enum Difficulty {
     HARD = 3
 };
 
+enum PlayerGender {
+    MASCULINO = 1,
+    FEMININO = 2
+};
+
 class Game {
 
 private:
@@ -31,6 +36,7 @@ public:
     virtual ~Game();
 
     int difficulty;
+    int gender, life, attack, defense, luck;
 
     void updateInput();
     void updatePlayer();

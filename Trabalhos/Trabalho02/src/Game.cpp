@@ -3,6 +3,8 @@
 #include "../headers/Game.h"
 #include "../headers/Menu.h"
 #include "../headers/DifficultyMenu.h"
+#include "../headers/GenderMenu.h"
+#include "../headers/AtributesMenu.h"
 
 void Game::initWindow() {
     this->window.create(sf::VideoMode(1280, 720), "ED - T2", sf::Style::Close | sf::Style::Titlebar);
@@ -16,7 +18,7 @@ void Game::initInput() {
 }
 
 void Game::initPlayer() {
-    this->player = new Player();
+    this->player = new Player(this->gender);
 }
 
 Game::Game() {
@@ -30,12 +32,25 @@ Game::Game() {
 
     this->difficulty = 1;
 
-    DifficultyMenu * difficultyMenu = new DifficultyMenu(this->window, this->difficulty);
+    auto * difficultyMenu = new DifficultyMenu(this->window, this->difficulty);
     difficultyMenu->run_menu();
     delete difficultyMenu;
     difficultyMenu = nullptr;
 
-    std::cout << "Difficulty: " << this->difficulty << "\n";
+    auto * genderMenu = new GenderMenu(this->window, this->gender);
+    genderMenu->run_menu();
+    delete genderMenu;
+    genderMenu = nullptr;
+
+    this->life = 0;
+    this->attack = 0;
+    this->defense = 0;
+    this->luck = 0;
+
+    auto * atributesMenu = new AtributesMenu(this->window, this->life, this->attack, this->defense, this->luck);
+    atributesMenu->run_menu();
+    delete atributesMenu;
+    atributesMenu = nullptr;
 
     this->initPlayer();
 }

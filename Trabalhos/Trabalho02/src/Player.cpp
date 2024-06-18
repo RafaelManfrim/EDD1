@@ -7,7 +7,9 @@ void Player::initVariables() {
 }
 
 void Player::initTexture() {
-    if (!this->textureSheet.loadFromFile("../assets/sprites/player/man.png")) {
+    std::string path = this->gender == 1 ? "../assets/sprites/player/man.png" : "../assets/sprites/player/woman.png";
+
+    if (!this->textureSheet.loadFromFile(path)) {
         std::cout << "ERRO::PLAYER::Não foi possível carregar a textura do jogador!" << "\n";
     }
 }
@@ -33,7 +35,7 @@ void Player::initPhysics() {
     this->drag = 0.70f;
 }
 
-Player::Player() {
+Player::Player(int &gender): gender(gender) {
     this->initVariables();
     this->initTexture();
     this->initSprite();
