@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../headers/Player.h"
+#include "../headers/Enemy.h"
 #include "../headers/Util.h"
 
 #include <SFML/Graphics.hpp>
@@ -27,7 +28,7 @@ enum Enemies {
     CURSED_MUSHROOM = 8,
     SKELETON_WARRIOR = 9,
     CURSED_SKELETON = 10,
-    GOBLIN = 12,
+    GOBLIN = 11,
 };
 
 enum Bosses {
@@ -50,9 +51,12 @@ private:
     Player* player;
     std::map<std::string, sf::Keyboard::Key> keyboardMappings;
 
+    Enemy* enemy;
+
     void initWindow();
     void initInput();
     void initPlayer();
+    void initEnemies();
 
 public:
     Game();
@@ -63,11 +67,16 @@ public:
     int difficulty;
     int gender, life, attack, defense, luck;
 
+    std::string getEnemyName(int enemy_id);
+    std::string getBossName(int boss_id);
+
     void updateInput();
     void updatePlayer();
+    void updateEnemies();
     void update();
 
     void renderPlayer();
+    void renderEnemies();
     void render();
 
     const sf::RenderWindow& getWindow();

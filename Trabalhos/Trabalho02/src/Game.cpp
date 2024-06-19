@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 
 #include "../headers/Game.h"
 #include "../headers/Menu.h"
@@ -19,6 +20,45 @@ void Game::initInput() {
 
 void Game::initPlayer() {
     this->player = new Player(this->gender);
+}
+
+void Game::initEnemies() {
+    // Criar uma lista ligada de inimigos
+
+    int enemies = 0;
+
+    switch (this->difficulty) {
+        case Difficulty::EASY:
+            enemies = 5;
+            break;
+        case Difficulty::MEDIUM:
+            enemies = 7;
+            break;
+        case Difficulty::HARD:
+            enemies = 9;
+            break;
+    }
+
+    std::random_device generator;
+    std::uniform_int_distribution<int> available_enemies(1, 11);
+    std::uniform_int_distribution<int> available_bosses(1, 5);
+
+    for (int i = 1; i <= enemies; i++) {
+        int enemy_id_draw = available_enemies(generator);
+
+        // Adicionar cada inimigo ao fim da lista
+
+        std::cout << "Inimigo " << i << ": " << this->getEnemyName(enemy_id_draw) << "\n";
+    }
+
+    int boss_id_draw = available_bosses(generator);
+
+    std::cout << "Chefe: " << this->getBossName(boss_id_draw) << "\n";
+
+    // Adicionar o boss ao final da lista
+
+    this->enemy = new Enemy();
+
 }
 
 Game::Game() {
@@ -55,12 +95,59 @@ Game::Game() {
     attributesMenu = nullptr;
 
     this->initPlayer();
+    this->initEnemies();
 }
 
 Game::~Game() {
     delete this->player;
     delete this->util;
 //    delete this->tileMap;
+}
+
+std::string Game::getEnemyName(int enemy_id) {
+    switch (enemy_id) {
+        case Enemies::GREEN_SLIME:
+            return "Green Slime";
+        case Enemies::RED_SLIME:
+            return "Red Slime";
+        case Enemies::BLUE_SLIME:
+            return "Blue Slime";
+        case Enemies::CURSED_GREEN_SLIME:
+            return "Cursed Green Slime";
+        case Enemies::FLYING_DEMON:
+            return "Flying Demon";
+        case Enemies::FLYING_EYE:
+            return "Flying Eye";
+        case Enemies::MUSHROOM:
+            return "Mushroom";
+        case Enemies::CURSED_MUSHROOM:
+            return "Cursed Mushroom";
+        case Enemies::SKELETON_WARRIOR:
+            return "Skeleton Warrior";
+        case Enemies::CURSED_SKELETON:
+            return "Cursed Skeleton";
+        case Enemies::GOBLIN:
+            return "Goblin";
+        default:
+            return "Unknown";
+    }
+}
+
+std::string Game::getBossName(int boss_id) {
+    switch (boss_id) {
+        case Bosses::EVIL_WIZARD:
+            return "Evil Wizard";
+        case Bosses::NECROMANCER:
+            return "Necromancer";
+        case Bosses::KNIGHT:
+            return "Knight";
+        case Bosses::NIGHT_BORNE:
+            return "Night Borne";
+        case Bosses::BRINGER_OF_DEATH:
+            return "Bringer of Death";
+        default:
+            return "Unknown";
+    }
 }
 
 void Game::updateInput() {
@@ -75,6 +162,10 @@ void Game::updatePlayer() {
     this->player->update();
 }
 
+void Game::updateEnemies() {
+    this->enemy->update();
+}
+
 void Game::update() {
     while (this->window.pollEvent(this->ev)) {
         if (this->ev.type == sf::Event::Closed) {
@@ -86,12 +177,18 @@ void Game::update() {
 
     this->updateInput();
     this->updatePlayer();
+    this->updateEnemies();
 //    this->updateTileMap();
 }
 
 void Game::renderPlayer() {
-    this->player->setPosition(this->player->getPosition().x,this->window.getSize().y - this->player->getGlobalBounds().height - 130);
+    this->player->setPosition(this->player->getPosition().x ,this->window.getSize().y - this->player->getGlobalBounds().height - 130);
     this->player->render(this->window);
+}
+
+void Game::renderEnemies() {
+    this->enemy->setPosition(this->enemy->getPosition().x, this->window.getSize().y - this->enemy->getGlobalBounds().height - 130);
+    this->enemy->render(this->window);
 }
 
 void Game::render() {
@@ -107,6 +204,7 @@ void Game::render() {
 
 //    this->renderTileMap();
     this->renderPlayer();
+    this->renderEnemies();
 
     this->window.display();
 }
