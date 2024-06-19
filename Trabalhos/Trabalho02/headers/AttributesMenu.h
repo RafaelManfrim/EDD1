@@ -13,7 +13,8 @@ public:
 
     Util* util;
 
-    int pos, remaining_points, &life, &attack, &defense, &luck;
+    int pos;
+    int remaining_points, &life, &attack, &defense, &luck;
     bool pressed, theselect;
 
     sf::RenderWindow &window;
