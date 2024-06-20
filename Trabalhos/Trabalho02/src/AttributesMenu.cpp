@@ -21,8 +21,6 @@ void AttributesMenu::close() {
 }
 
 void AttributesMenu::set_values(){
-    int pos = 0;
-
     pressed = theselect = false;
 
     if (!font->loadFromFile("../assets/fonts/TT-Octosquares-Trial-Medium.otf")) {
@@ -65,7 +63,10 @@ void AttributesMenu::set_values(){
     controls_sizes = {56, 56, 56, 56, 56, 56, 56, 56, 56};
 
     for (std::size_t i{}; i < controls_texts.size(); ++i){
-        controls_texts[i].setColor(sf::Color::Black);
+        if (i == 8) {
+            controls_texts[i].setColor(sf::Color::Black);
+        }
+
         controls_texts[i].setFont(*font);
         controls_texts[i].setString(controls[i]);
         controls_texts[i].setCharacterSize(controls_sizes[i]);
@@ -73,19 +74,32 @@ void AttributesMenu::set_values(){
         controls_texts[i].setPosition(controls_coords[i]);
     }
 
-    pos = 1;
+    this->pos = 0;
+
+    controls_texts[pos].setOutlineThickness(4);
+    controls_texts[pos].setOutlineColor(sf::Color::Red);
 }
 
 void AttributesMenu::loop_events(){
     sf::Event event;
     while(window.pollEvent(event)){
+        std::cout << "Remaining: " << remaining_points << std::endl;
+
         if(event.type == sf::Event::Closed){
             window.close();
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S) && !pressed){
-            if(pos < 2){
+        if(util->isKeyPressed(sf::Keyboard::S) && !pressed){
+            if(pos <= 6){
                 pos += 2;
+                pressed = true;
+                controls_texts[pos].setOutlineThickness(4);
+                controls_texts[pos].setOutlineColor(sf::Color::Red);
+                controls_texts[pos - 2].setOutlineThickness(0);
+                pressed = false;
+                theselect = false;
+            } else if (pos == 7) {
+                pos++;
                 pressed = true;
                 controls_texts[pos].setOutlineThickness(4);
                 controls_texts[pos].setOutlineColor(sf::Color::Red);
@@ -95,85 +109,69 @@ void AttributesMenu::loop_events(){
             }
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !pressed){
-            if(pos > 2){
+        if(util->isKeyPressed(sf::Keyboard::W)){
+            if(pos >= 2){
                 pos -= 2;
-                pressed = true;
                 controls_texts[pos].setOutlineThickness(4);
                 controls_texts[pos].setOutlineColor(sf::Color::Red);
-                controls_texts[pos + 1].setOutlineThickness(0);
+                controls_texts[pos + 2].setOutlineThickness(0);
+                theselect = false;
+            }
+        }
+
+        if(util->isKeyPressed(sf::Keyboard::A) && !pressed){
+            if(this->pos == 1 || this->pos == 3 || this->pos == 5 || this->pos == 7){
+                --this->pos;
+                pressed = true;
+                controls_texts[this->pos].setOutlineThickness(4);
+                controls_texts[this->pos].setOutlineColor(sf::Color::Red);
+                controls_texts[this->pos + 1].setOutlineThickness(0);
                 pressed = false;
                 theselect = false;
             }
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !pressed){
-            if(pos > 1){
-                --pos;
+        if(util->isKeyPressed(sf::Keyboard::D) && !pressed){
+            if(this->pos == 0 || this->pos == 2 || this->pos == 4 || this->pos == 6){
+                ++this->pos;
                 pressed = true;
-                controls_texts[pos].setOutlineThickness(4);
-                controls_texts[pos].setOutlineColor(sf::Color::Red);
-                controls_texts[pos + 1].setOutlineThickness(0);
+                controls_texts[this->pos].setOutlineThickness(4);
+                controls_texts[this->pos].setOutlineColor(sf::Color::Red);
+                controls_texts[this->pos - 1].setOutlineThickness(0);
                 pressed = false;
                 theselect = false;
             }
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !pressed){
-            if(pos < 1){
-                ++pos;
-                pressed = true;
-                controls_texts[pos].setOutlineThickness(4);
-                controls_texts[pos].setOutlineColor(sf::Color::Red);
-                controls_texts[pos + 1].setOutlineThickness(0);
-                pressed = false;
-                theselect = false;
+        if (util->isKeyPressed(sf::Keyboard::Enter)) {
+            if(this->pos == 0 && remaining_points > 0){
+                life++;
+                remaining_points--;
+            } else  if(this->pos == 1 && remaining_points < 10){
+                life--;
+                remaining_points++;
+            } else if(this->pos == 2 && remaining_points > 0){
+                attack++;
+                remaining_points--;
+            } else if(this->pos == 3 && remaining_points < 10){
+                attack--;
+                remaining_points++;
+            } else if(this->pos == 4 && remaining_points > 0){
+                defense++;
+                remaining_points--;
+            } else if(this->pos == 5 && remaining_points < 10){
+                defense--;
+                remaining_points++;
+            } else if(this->pos == 6 && remaining_points > 0){
+                luck++;
+                remaining_points--;
+            } else if(this->pos == 7  && remaining_points < 10){
+                luck--;
+                remaining_points++;
+            } else if(this->pos == 8 && !theselect){
+                theselect = true;
+                close();
             }
-        }
-
-        if(util->isKeyPressed(sf::Keyboard::Enter) && pos == 1 && !theselect && remaining_points > 0){
-            theselect = true;
-            life++;
-        }
-
-        if(util->isKeyPressed(sf::Keyboard::Enter) && pos == 2 && !theselect && remaining_points < 10){
-            theselect = true;
-            life--;
-        }
-
-        if(util->isKeyPressed(sf::Keyboard::Enter) && pos == 3 && !theselect && remaining_points > 0){
-            theselect = true;
-            attack++;
-        }
-
-        if(util->isKeyPressed(sf::Keyboard::Enter) && pos == 4 && !theselect && remaining_points < 10){
-            theselect = true;
-            attack--;
-        }
-
-        if(util->isKeyPressed(sf::Keyboard::Enter) && pos == 5 && !theselect && remaining_points > 0){
-            theselect = true;
-            defense++;
-        }
-
-        if(util->isKeyPressed(sf::Keyboard::Enter) && pos == 6 && !theselect && remaining_points < 10){
-            theselect = true;
-            defense--;
-        }
-
-        if(util->isKeyPressed(sf::Keyboard::Enter) && pos == 7 && !theselect && remaining_points > 0){
-            theselect = true;
-            luck++;
-        }
-
-        if(util->isKeyPressed(sf::Keyboard::Enter) && pos == 8  && !theselect && remaining_points < 10){
-            theselect = true;
-            luck--;
-        }
-
-        if(util->isKeyPressed(sf::Keyboard::Enter) && pos == 9 && !theselect){
-            theselect = true;
-            close();
         }
     }
 }
