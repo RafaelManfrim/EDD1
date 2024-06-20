@@ -24,6 +24,8 @@ void Enemy::initSprite() {
 
     this->sprite.setTextureRect(this->currentFrame);
     this->sprite.setScale(-4.f, 4.f);
+
+    this->sprite.setPosition(this->sprite.getPosition().x + 1000, 720 - this->getGlobalBounds().height - 131);
 }
 
 void Enemy::initAnimations() {

@@ -182,12 +182,10 @@ void Game::update() {
 }
 
 void Game::renderPlayer() {
-    this->player->setPosition(this->player->getPosition().x ,this->window.getSize().y - this->player->getGlobalBounds().height - 130);
     this->player->render(this->window);
 }
 
 void Game::renderEnemies() {
-    this->enemy->setPosition(this->enemy->getPosition().x, this->window.getSize().y - this->enemy->getGlobalBounds().height - 130);
     this->enemy->render(this->window);
 }
 
