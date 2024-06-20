@@ -23,7 +23,7 @@ void Game::initPlayer() {
 }
 
 void Game::initEnemies() {
-    // Criar uma lista ligada de inimigos
+    // Criar uma fila de inimigos
 
     int enemies = 0;
 
@@ -46,9 +46,10 @@ void Game::initEnemies() {
     for (int i = 1; i <= enemies; i++) {
         int enemy_id_draw = available_enemies(generator);
 
-        // Adicionar cada inimigo ao fim da lista
+        this->enemy = new Enemy(enemy_id_draw, i);
 
-        std::cout << "Inimigo " << i << ": " << this->getEnemyName(enemy_id_draw) << "\n";
+        // Adicionar cada inimigo ao fim da fila
+        std::cout << "Inimigo " << i << ": " << this->enemy->getEnemyName() << "\n";
     }
 
     int boss_id_draw = available_bosses(generator);
@@ -56,8 +57,6 @@ void Game::initEnemies() {
     std::cout << "Chefe: " << this->getBossName(boss_id_draw) << "\n";
 
     // Adicionar o boss ao final da lista
-
-    this->enemy = new Enemy();
 
 }
 
@@ -102,35 +101,6 @@ Game::~Game() {
     delete this->player;
     delete this->util;
 //    delete this->tileMap;
-}
-
-std::string Game::getEnemyName(int enemy_id) {
-    switch (enemy_id) {
-        case Enemies::GREEN_SLIME:
-            return "Green Slime";
-        case Enemies::RED_SLIME:
-            return "Red Slime";
-        case Enemies::BLUE_SLIME:
-            return "Blue Slime";
-        case Enemies::CURSED_GREEN_SLIME:
-            return "Cursed Green Slime";
-        case Enemies::FLYING_DEMON:
-            return "Flying Demon";
-        case Enemies::FLYING_EYE:
-            return "Flying Eye";
-        case Enemies::MUSHROOM:
-            return "Mushroom";
-        case Enemies::CURSED_MUSHROOM:
-            return "Cursed Mushroom";
-        case Enemies::SKELETON_WARRIOR:
-            return "Skeleton Warrior";
-        case Enemies::CURSED_SKELETON:
-            return "Cursed Skeleton";
-        case Enemies::GOBLIN:
-            return "Goblin";
-        default:
-            return "Unknown";
-    }
 }
 
 std::string Game::getBossName(int boss_id) {
