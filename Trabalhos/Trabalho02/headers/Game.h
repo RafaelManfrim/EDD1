@@ -42,6 +42,8 @@ public:
     int gender, life, attack, defense, luck;
     int map_size;
 
+    bool movementDisabled;
+
     EnemyQueue* enemyQueue;
 
     void getMapSizeByDifficulty(int difficulty_id);

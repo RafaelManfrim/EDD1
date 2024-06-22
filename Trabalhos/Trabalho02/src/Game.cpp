@@ -6,7 +6,6 @@
 #include "../headers/DifficultyMenu.h"
 #include "../headers/GenderMenu.h"
 #include "../headers/AttributesMenu.h"
-#include "../headers/EnemyQueue.h"
 
 void Game::initWindow() {
     this->window.create(sf::VideoMode(1280, 720), "ED - T2", sf::Style::Close | sf::Style::Titlebar);
@@ -81,6 +80,8 @@ Game::Game() {
     delete attributesMenu;
     attributesMenu = nullptr;
 
+    this->movementDisabled = false;
+
     this->initPlayer();
     this->initEnemies();
 }
@@ -108,6 +109,10 @@ void Game::getMapSizeByDifficulty(int difficulty_id) {
 }
 
 void Game::updateInput() {
+    if(this->movementDisabled) {
+       return;
+    }
+
     if (sf::Keyboard::isKeyPressed(this->keyboardMappings["KEY_MOVE_LEFT"])) {
         this->player->move(-1.f);
     } else if (sf::Keyboard::isKeyPressed(this->keyboardMappings["KEY_MOVE_RIGHT"])) {
@@ -117,6 +122,19 @@ void Game::updateInput() {
 
 void Game::updatePlayer() {
     this->player->update();
+
+    sf::Vector2f playerPosition = this->player->getPosition();
+    sf::Vector2f cameraCenter = this->camera.getCenter();
+    sf::Vector2f cameraSize = camera.getSize();
+
+    float borderLeftOfCamera = cameraCenter.x - cameraSize.x / 2 + 256.f;
+    float borderRightOfCamera = cameraCenter.x + cameraSize.x - 256.f;
+
+    if (playerPosition.x < borderLeftOfCamera) {
+        this->player->setPosition(borderLeftOfCamera, playerPosition.y);
+    } else if (playerPosition.x + this->player->getGlobalBounds().width > borderRightOfCamera) {
+        this->player->setPosition(borderRightOfCamera - this->player->getGlobalBounds().width, playerPosition.y);
+    }
 }
 
 

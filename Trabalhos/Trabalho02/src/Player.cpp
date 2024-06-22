@@ -21,7 +21,7 @@ void Player::initSprite() {
     this->sprite.setTextureRect(this->currentFrame);
     this->sprite.setScale(-4.f, 4.f);
 
-    this->setPosition(this->getPosition().x + 250 ,720 - this->getGlobalBounds().height - 131);
+    this->setPosition(this->getPosition().x + 300 ,720 - this->getGlobalBounds().height - 131);
 }
 
 void Player::initAnimations() {
