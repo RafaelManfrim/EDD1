@@ -108,6 +108,10 @@ void Game::getMapSizeByDifficulty(int difficulty_id) {
     }
 }
 
+float Game::calculateDistance(const sf::Vector2f& point1, const sf::Vector2f& point2) const {
+    return std::abs(point1.x - point2.x);
+}
+
 void Game::updateInput() {
     if(this->movementDisabled) {
        return;
@@ -154,9 +158,33 @@ void Game::updateCamera() {
 void Game::updateEnemies() {
     std::vector<Enemy*> enemies = this->enemyQueue->getEnemies();
 
-    for (auto* enemy : enemies) {
-        enemy->update();
+    if (!enemies.empty()) {
+        enemies.front()->update();
+
+        float distance = calculateDistance(this->player->getCenter(), enemies.front()->getCenter());
+
+        if(distance <= 950) {
+            this->movementDisabled = true;
+            std::cout << "Combate Iniciado" << std::endl;
+
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                std::cout << "Vitóia" << std::endl;
+                this->movementDisabled = false;
+                this->enemyQueue->pop();
+            }
+        }
     }
+
+//    std::vector<Enemy*> enemies = this->enemyQueue->getEnemies();
+//
+//    for (auto* enemy : enemies) {
+//        enemy->update();
+//
+//        float distanceX = calculateDistance(this->player->getCenter(), enemy->getCenter());
+//        std::cout << "Nome do inimigo: " << enemy->getEnemyName() << std::endl;
+//        std::cout << "Distância x para o inimigo: " << distanceX << std::endl;
+//    }
+
 //    if (!this->enemyQueue->isEmpty()) {
 //        Enemy* currentEnemy = this->enemyQueue->pop();
 //        currentEnemy->update();

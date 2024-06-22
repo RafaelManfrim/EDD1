@@ -48,6 +48,8 @@ public:
 
     void getMapSizeByDifficulty(int difficulty_id);
 
+    float calculateDistance(const sf::Vector2f& point1, const sf::Vector2f& point2) const;
+
     void updateInput();
     void updatePlayer();
     void updateEnemies();

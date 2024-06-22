@@ -36,6 +36,7 @@ public:
 
     const sf::Vector2f getPosition() const;
     const sf::FloatRect getGlobalBounds() const;
+    const sf::Vector2f getCenter() const;
 
     std::string getEnemyName();
     std::string getBossName(int boss_id);

@@ -40,6 +40,7 @@ public:
     bool getAnimSwitch();
     const sf::Vector2f getPosition() const;
     const sf::FloatRect getGlobalBounds() const;
+    const sf::Vector2f getCenter() const;
 
     void setPosition(const float x, const float y);
 

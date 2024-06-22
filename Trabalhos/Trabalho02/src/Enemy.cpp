@@ -51,7 +51,7 @@ void Enemy::initSprite() {
             } else if (this->filename == "knight.png") {
                 this->sprite.setScale(-4.f, 4.f);
             } else if (this->filename == "night_borne.png") {
-                this->sprite.setScale(-10.f, 10.f);
+                this->sprite.setScale(-8.f, 8.f);
             }
         } else {
             this->sprite.setScale(7.f, 7.f);
@@ -242,6 +242,11 @@ const sf::Vector2f Enemy::getPosition() const {
 
 const sf::FloatRect Enemy::getGlobalBounds() const {
     return this->sprite.getGlobalBounds();
+}
+
+const sf::Vector2f Enemy::getCenter() const {
+    sf::FloatRect bounds = this->sprite.getGlobalBounds();
+    return sf::Vector2f(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
 }
 
 std::string Enemy::getEnemyName() {
