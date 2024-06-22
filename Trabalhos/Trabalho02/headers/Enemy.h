@@ -2,6 +2,11 @@
 
 #include <SFML/Graphics.hpp>
 
+enum EnemyType {
+    NORMAL = 1,
+    BOSS = 2
+};
+
 enum Enemies {
     GREEN_SLIME = 1,
     RED_SLIME = 2,
@@ -16,9 +21,33 @@ enum Enemies {
     GOBLIN = 11,
 };
 
+enum Bosses {
+    EVIL_WIZARD = 1,
+    NECROMANCER = 2,
+    KNIGHT = 3,
+    NIGHT_BORNE = 4,
+    BRINGER_OF_DEATH = 5
+};
+
 class Enemy {
-private:
+public:
+    Enemy(int enemy_id, int position, int type);
+    virtual ~Enemy();
+
+    const sf::Vector2f getPosition() const;
+    const sf::FloatRect getGlobalBounds() const;
+
+    std::string getEnemyName();
+    std::string getBossName(int boss_id);
+
+    void setPosition(const float x, const float y);
+
+    void updateAnimations();
+    void update();
+    void render(sf::RenderTarget& target);
+protected:
     int enemy_id;
+    int type;
     int image_width, image_height, sprites_count, sprite_width;
     bool rotate;
     std::string filename;
@@ -35,19 +64,7 @@ private:
     void initAnimations();
 
     void getEnemyData();
+    void getBossData();
+private:
 
-public:
-    Enemy(int enemy_id, int position);
-    virtual ~Enemy();
-
-    const sf::Vector2f getPosition() const;
-    const sf::FloatRect getGlobalBounds() const;
-
-    std::string getEnemyName();
-
-    void setPosition(const float x, const float y);
-
-    void updateAnimations();
-    void update();
-    void render(sf::RenderTarget& target);
 };

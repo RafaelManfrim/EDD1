@@ -3,7 +3,13 @@
 #include "../headers/Enemy.h"
 
 void Enemy::initTexture() {
-    std::string path = "../assets/sprites/enemies/" + this->filename;
+    std::string path;
+
+    if(this->type == 1) {
+        path = "../assets/sprites/enemies/" + this->filename;
+    } else if (this->type == 2) {
+        path = "../assets/sprites/bosses/" + this->filename;
+    }
 
     if (!this->textureSheet.loadFromFile(path)) {
         std::cout << "ERRO::ENEMY::Não foi possível carregar a textura do inimigo!" << "\n";
@@ -16,27 +22,43 @@ void Enemy::initSprite() {
 
     this->sprite.setTextureRect(this->currentFrame);
 
-    if (this->rotate) {
-        if (this->image_height == 32 || (this->image_height == 64 && sprite_width == 150)) {
-            this->sprite.setScale(-4.f, 4.f);
-        } else if(this->image_height == 64 && sprite_width == 64) {
-            this->sprite.setScale(-5.f, 5.f);
-        } else {
-            this->sprite.setScale(-3.f, 3.f);
-        }
-    } else {
-        if (this->image_height == 32 || (this->image_height == 64 && sprite_width == 80)) {
-            if(this->sprite_width == 32) {
-                this->sprite.setScale(5.f, 5.f);
+    if (this->type == 1) {
+        if (this->rotate) {
+            if (this->image_height == 32 || (this->image_height == 64 && sprite_width == 150)) {
+                this->sprite.setScale(-4.f, 4.f);
+            } else if(this->image_height == 64 && sprite_width == 64) {
+                this->sprite.setScale(-5.f, 5.f);
             } else {
-                this->sprite.setScale(4.f, 4.f);
+                this->sprite.setScale(-3.f, 3.f);
             }
         } else {
-            this->sprite.setScale(3.f, 3.f);
+            if (this->image_height == 32 || (this->image_height == 64 && sprite_width == 80)) {
+                if(this->sprite_width == 32) {
+                    this->sprite.setScale(5.f, 5.f);
+                } else {
+                    this->sprite.setScale(4.f, 4.f);
+                }
+            } else {
+                this->sprite.setScale(3.f, 3.f);
+            }
+        }
+    } else {
+        if (this->rotate) {
+            if (this->filename == "evil_wizard.png") {
+                this->sprite.setScale(-5.f, 5.f);
+            } else if (this->filename == "necromancer.png") {
+                this->sprite.setScale(-7.f, 7.f);
+            } else if (this->filename == "knight.png") {
+                this->sprite.setScale(-4.f, 4.f);
+            } else if (this->filename == "night_borne.png") {
+                this->sprite.setScale(-10.f, 10.f);
+            }
+        } else {
+            this->sprite.setScale(7.f, 7.f);
         }
     }
 
-    this->sprite.setPosition(this->sprite.getPosition().x + 600, 720 - this->getGlobalBounds().height - 131);
+    this->sprite.setPosition(this->sprite.getPosition().x + 1600 * position, 720 - this->getGlobalBounds().height - 131);
 }
 
 void Enemy::initAnimations() {
@@ -145,8 +167,66 @@ void Enemy::getEnemyData() {
     }
 }
 
-Enemy::Enemy(int enemy_id, int position) : enemy_id(enemy_id), position(position) {
-    this->getEnemyData();
+void Enemy::getBossData() {
+    switch (this->enemy_id) {
+        case Bosses::EVIL_WIZARD:
+            this->image_width = 2000;
+            this->image_height = 128;
+            this->sprites_count = 8;
+            this->sprite_width = 250;
+            this->rotate = true;
+            this->filename = "evil_wizard.png";
+            break;
+        case Bosses::NECROMANCER:
+            this->image_width = 1280;
+            this->image_height = 64;
+            this->sprites_count = 8;
+            this->sprite_width = 160;
+            this->rotate = true;
+            this->filename = "necromancer.png";
+            break;
+        case Bosses::KNIGHT:
+            this->image_width = 800;
+            this->image_height = 85;
+            this->sprites_count = 8;
+            this->sprite_width = 100;
+            this->rotate = true;
+            this->filename = "knight.png";
+            break;
+        case Bosses::NIGHT_BORNE:
+            this->image_width = 720;
+            this->image_height = 64;
+            this->sprites_count = 9;
+            this->sprite_width = 80;
+            this->rotate = true;
+            this->filename = "night_borne.png";
+            break;
+        case Bosses::BRINGER_OF_DEATH:
+            this->image_width = 1120;
+            this->image_height = 64;
+            this->sprites_count = 8;
+            this->sprite_width = 140;
+            this->rotate = false;
+            this->filename = "bringer_of_death.png";
+            break;
+        default:
+            this->image_width = 0;
+            this->image_height = 0;
+            this->sprites_count = 0;
+            this->sprite_width = 0;
+            this->rotate = false;
+            this->filename = "unknown.png";
+            break;
+    }
+}
+
+Enemy::Enemy(int enemy_id, int position, int type) : enemy_id(enemy_id), position(position), type(type) {
+    if(this->type == 1) {
+        this->getEnemyData();
+    } else if(this->type == 2) {
+        this->getBossData();
+    }
+
     this->initTexture();
     this->initSprite();
     this->initAnimations();
@@ -188,6 +268,23 @@ std::string Enemy::getEnemyName() {
             return "Cursed Skeleton";
         case Enemies::GOBLIN:
             return "Goblin";
+        default:
+            return "Unknown";
+    }
+}
+
+std::string Enemy::getBossName(int boss_id) {
+    switch (boss_id) {
+        case Bosses::EVIL_WIZARD:
+            return "Evil Wizard";
+        case Bosses::NECROMANCER:
+            return "Necromancer";
+        case Bosses::KNIGHT:
+            return "Knight";
+        case Bosses::NIGHT_BORNE:
+            return "Night Borne";
+        case Bosses::BRINGER_OF_DEATH:
+            return "Bringer of Death";
         default:
             return "Unknown";
     }

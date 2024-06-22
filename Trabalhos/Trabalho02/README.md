@@ -26,3 +26,14 @@ Implementar em C++ de acordo com as seguintes instruções:
 - Pilhas também podem ser utilizadas para armazenar ações e permitir desfazer ações efetuadas.
 
 Estruturas de dados permitem armazenar, organizar e gerenciar conjuntos dinâmicos de dados. Utilizem-as para este fim, considerando os dados existentes em seu jogo.
+
+## O que resta a ser feito:
+
+- Finalizar Menus
+- Adicionar menus para a criação do nome de personagem/classe do personagem (opcional)
+- Bloquear o personagem de sair do mapa
+- Identificar a distância certa entre o player e o inimigo e iniciar uma batalha
+- Realizar a batalha, em caso de vitória do jogador, remover o inimigo da fila
+- Adicionar sistema de inventário como uma lista encadeada, realizar cálculo de drop de itens após o combate com um inimigo
+- Adicionar música de fundo no game e música de vitória/derrota
+- Descobrir onde colocar pilha e fila de prioridade

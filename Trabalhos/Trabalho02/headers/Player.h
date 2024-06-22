@@ -4,6 +4,11 @@
 
 enum PLAYER_ANIMATION_STATES {IDLE = 0, MOVING_LEFT, MOVING_RIGHT};
 
+enum PlayerGender {
+    MASCULINO = 1,
+    FEMININO = 2
+};
+
 class Player {
 private:
     sf::Sprite sprite;

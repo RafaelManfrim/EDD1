@@ -6,6 +6,7 @@
 #include "../headers/DifficultyMenu.h"
 #include "../headers/GenderMenu.h"
 #include "../headers/AttributesMenu.h"
+#include "../headers/EnemyQueue.h"
 
 void Game::initWindow() {
     this->window.create(sf::VideoMode(1280, 720), "ED - T2", sf::Style::Close | sf::Style::Titlebar);
@@ -22,9 +23,11 @@ void Game::initPlayer() {
     this->player = new Player(this->gender);
 }
 
-void Game::initEnemies() {
-    // Criar uma fila de inimigos
+void Game::initCamera() {
+    this->camera = sf::View(sf::FloatRect(0, 0, 1280, 720));
+}
 
+void Game::initEnemies() {
     int enemies = 0;
 
     switch (this->difficulty) {
@@ -39,31 +42,14 @@ void Game::initEnemies() {
             break;
     }
 
-    std::random_device generator;
-    std::uniform_int_distribution<int> available_enemies(1, 11);
-    std::uniform_int_distribution<int> available_bosses(1, 5);
-
-    for (int i = 1; i <= enemies; i++) {
-        int enemy_id_draw = available_enemies(generator);
-
-        this->enemy = new Enemy(enemy_id_draw, i);
-
-        // Adicionar cada inimigo ao fim da fila
-        std::cout << "Inimigo " << i << ": " << this->enemy->getEnemyName() << "\n";
-    }
-
-    int boss_id_draw = available_bosses(generator);
-
-    std::cout << "Chefe: " << this->getBossName(boss_id_draw) << "\n";
-
-    // Adicionar o boss ao final da lista
-
+    this->enemyQueue = new EnemyQueue(enemies);
 }
 
 Game::Game() {
     this->util = new Util();
 
     this->initWindow();
+    this->initCamera();
     this->initInput();
 
     Menu * menu = new Menu(this->window, this->util);
@@ -77,6 +63,8 @@ Game::Game() {
     difficultyMenu->run_menu();
     delete difficultyMenu;
     difficultyMenu = nullptr;
+
+    this->getMapSizeByDifficulty(this->difficulty);
 
     auto * genderMenu = new GenderMenu(this->window, this->util, this->gender);
     genderMenu->run_menu();
@@ -101,22 +89,21 @@ Game::~Game() {
     delete this->player;
     delete this->util;
 //    delete this->tileMap;
+    delete this->enemyQueue;
 }
 
-std::string Game::getBossName(int boss_id) {
-    switch (boss_id) {
-        case Bosses::EVIL_WIZARD:
-            return "Evil Wizard";
-        case Bosses::NECROMANCER:
-            return "Necromancer";
-        case Bosses::KNIGHT:
-            return "Knight";
-        case Bosses::NIGHT_BORNE:
-            return "Night Borne";
-        case Bosses::BRINGER_OF_DEATH:
-            return "Bringer of Death";
+void Game::getMapSizeByDifficulty(int difficulty_id) {
+    switch (difficulty_id) {
+        case Difficulty::EASY:
+            this->map_size = 6 * 1800;
+            break;
+        case Difficulty::MEDIUM:
+            this->map_size = 8 * 1800;
+            break;
+        case Difficulty::HARD:
         default:
-            return "Unknown";
+            this->map_size = 10 * 1800;
+            break;
     }
 }
 
@@ -132,8 +119,36 @@ void Game::updatePlayer() {
     this->player->update();
 }
 
+
+void Game::updateCamera() {
+    sf::Vector2f playerPosition = this->player->getPosition();
+    sf::Vector2f cameraCenter = this->camera.getCenter();
+
+    if (playerPosition.x - cameraCenter.x > -320) {
+        this->camera.setCenter(playerPosition.x + 320, cameraCenter.y);
+    }
+
+    if (this->camera.getCenter().x > float (this->map_size) - 640) {
+        this->camera.setCenter(float (this->map_size - 640), this->camera.getCenter().y);
+    }
+}
+
 void Game::updateEnemies() {
-    this->enemy->update();
+    std::vector<Enemy*> enemies = this->enemyQueue->getEnemies();
+
+    for (auto* enemy : enemies) {
+        enemy->update();
+    }
+//    if (!this->enemyQueue->isEmpty()) {
+//        Enemy* currentEnemy = this->enemyQueue->pop();
+//        currentEnemy->update();
+//
+////        if (currentEnemy->isDead()) {
+////            delete currentEnemy;
+////        } else {
+////            this->enemyQueue->push(currentEnemy);
+////        }
+//    }
 }
 
 void Game::update() {
@@ -145,10 +160,28 @@ void Game::update() {
         }
     }
 
+    this->updateCamera();
     this->updateInput();
     this->updatePlayer();
     this->updateEnemies();
+
 //    this->updateTileMap();
+}
+
+void Game::renderBackground() {
+    if (!backgroundTexture.loadFromFile("../assets/sprites/game-background.png")) {
+        std::cout << "ERRO::BACKGROUND::Não foi possível carregar o background do game!" << "\n";
+    }
+
+    backgroundSprite.setTexture(backgroundTexture);
+
+    float backgroundWidth = float (backgroundTexture.getSize().x);
+    int horizontalTiles = static_cast<int>(std::ceil(float (map_size) / backgroundWidth)) + 1;
+
+    for (int i = 0; i < horizontalTiles; ++i) {
+        backgroundSprite.setPosition(float (i) * backgroundWidth, 0);
+        this->window.draw(backgroundSprite);
+    }
 }
 
 void Game::renderPlayer() {
@@ -156,19 +189,26 @@ void Game::renderPlayer() {
 }
 
 void Game::renderEnemies() {
-    this->enemy->render(this->window);
+    std::vector<Enemy*> enemies = this->enemyQueue->getEnemies();
+
+    for (auto* enemy : enemies) {
+        enemy->render(this->window);
+    }
+//    std::queue<Enemy*> tempQueue = this->enemyQueue->getQueue();
+//
+//    while (!tempQueue.empty()) {
+//        Enemy* currentEnemy = tempQueue.front();
+//        currentEnemy->render(this->window);
+//        tempQueue.pop();
+//    }
 }
 
 void Game::render() {
     this->window.clear();
 
-    if (!backgroundTexture.loadFromFile("../assets/sprites/game-background.png")) {
-        std::cout << "ERRO::BACKGROUND::Não foi possível carregar o background do game!" << "\n";
-    }
+    this->window.setView(this->camera);
 
-    backgroundSprite.setTexture(backgroundTexture);
-
-    this->window.draw(backgroundSprite);
+    this->renderBackground();
 
 //    this->renderTileMap();
     this->renderPlayer();
