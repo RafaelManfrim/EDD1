@@ -4,6 +4,7 @@
 #include "../headers/Enemy.h"
 #include "../headers/Util.h"
 #include "../headers/EnemyQueue.h"
+#include "./Fight.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -24,6 +25,8 @@ private:
     sf::Sprite backgroundSprite;
 
     Player* player;
+    Fight* fight;
+
     std::map<std::string, sf::Keyboard::Key> keyboardMappings;
 
     void initWindow();
@@ -32,6 +35,8 @@ private:
     void initCamera();
     void initEnemies();
 
+//    void startFight(Enemy* enemy);
+
 public:
     Game();
     virtual ~Game();
@@ -39,7 +44,7 @@ public:
     Util* util;
 
     int difficulty;
-    int gender, life, attack, defense, luck;
+    int gender, player_life, player_attack, player_defense, player_luck;
     int map_size;
 
     bool movementDisabled;

@@ -6,6 +6,7 @@
 #include "../headers/DifficultyMenu.h"
 #include "../headers/GenderMenu.h"
 #include "../headers/AttributesMenu.h"
+#include "../headers/Fight.h"
 
 void Game::initWindow() {
     this->window.create(sf::VideoMode(1280, 720), "ED - T2", sf::Style::Close | sf::Style::Titlebar);
@@ -19,7 +20,7 @@ void Game::initInput() {
 }
 
 void Game::initPlayer() {
-    this->player = new Player(this->gender);
+    this->player = new Player(this->gender, this->player_life, this->player_attack, this->player_defense, this->player_luck);
 }
 
 void Game::initCamera() {
@@ -27,21 +28,7 @@ void Game::initCamera() {
 }
 
 void Game::initEnemies() {
-    int enemies = 0;
-
-    switch (this->difficulty) {
-        case Difficulty::EASY:
-            enemies = 5;
-            break;
-        case Difficulty::MEDIUM:
-            enemies = 7;
-            break;
-        case Difficulty::HARD:
-            enemies = 9;
-            break;
-    }
-
-    this->enemyQueue = new EnemyQueue(enemies);
+    this->enemyQueue = new EnemyQueue(this->difficulty);
 }
 
 Game::Game() {
@@ -70,12 +57,20 @@ Game::Game() {
     delete genderMenu;
     genderMenu = nullptr;
 
-    this->life = 0;
-    this->attack = 0;
-    this->defense = 0;
-    this->luck = 0;
+    this->player_life = 0;
+    this->player_attack = 0;
+    this->player_defense = 0;
+    this->player_luck = 0;
 
-    auto * attributesMenu = new AttributesMenu(this->window, this->util, this->life, this->attack, this->defense, this->luck);
+    auto * attributesMenu = new AttributesMenu(
+            this->window,
+            this->util,
+            this->player_life,
+            this->player_attack,
+            this->player_defense,
+            this->player_luck
+            );
+
     attributesMenu->run_menu();
     delete attributesMenu;
     attributesMenu = nullptr;
@@ -84,6 +79,8 @@ Game::Game() {
 
     this->initPlayer();
     this->initEnemies();
+
+    this->fight = nullptr;
 }
 
 Game::~Game() {
@@ -91,6 +88,7 @@ Game::~Game() {
     delete this->util;
 //    delete this->tileMap;
     delete this->enemyQueue;
+    delete this->fight;
 }
 
 void Game::getMapSizeByDifficulty(int difficulty_id) {
@@ -163,16 +161,30 @@ void Game::updateEnemies() {
 
         float distance = calculateDistance(this->player->getCenter(), enemies.front()->getCenter());
 
-        if(distance <= 950) {
-            this->movementDisabled = true;
-            std::cout << "Combate Iniciado" << std::endl;
-
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-                std::cout << "Vitóia" << std::endl;
-                this->movementDisabled = false;
-                this->enemyQueue->pop();
-            }
-        }
+//        if(distance <= 950) {
+//            this->movementDisabled = true;
+//
+//            if (this->fight == nullptr) {
+//                this->fight = new Fight(*this->player, *enemies.front());
+//
+//                if (this->fight->getWinner() == 1) {
+//                    if(enemies.front()->getEnemyType() == EnemyType::NORMAL) {
+//                        std::cout << "Você derrotou o inimigo!" << std::endl;
+//                    } else {
+//                        std::cout << "Você derrotou o boss!" << std::endl;
+//                    }
+//
+//                    this->movementDisabled = false;
+//                    this->enemyQueue->pop();
+//
+//                    delete this->fight;
+//                    this->fight = nullptr;
+//                } else {
+//                    delete this->fight;
+//                    this->fight = nullptr;
+//                }
+//            }
+//        }
     }
 
 //    std::vector<Enemy*> enemies = this->enemyQueue->getEnemies();
@@ -184,7 +196,6 @@ void Game::updateEnemies() {
 //        std::cout << "Nome do inimigo: " << enemy->getEnemyName() << std::endl;
 //        std::cout << "Distância x para o inimigo: " << distanceX << std::endl;
 //    }
-
 //    if (!this->enemyQueue->isEmpty()) {
 //        Enemy* currentEnemy = this->enemyQueue->pop();
 //        currentEnemy->update();

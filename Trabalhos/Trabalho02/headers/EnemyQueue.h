@@ -8,7 +8,7 @@
 
 class EnemyQueue {
 public:
-    EnemyQueue(int size);
+    EnemyQueue(int &difficulty);
     virtual ~EnemyQueue();
 
     Enemy* pop();
@@ -19,7 +19,7 @@ public:
 protected:
 
 private:
-    int queue_size;
+    int difficulty;
 
     void initQueue(int size);
 

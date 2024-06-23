@@ -2,26 +2,41 @@
 #include <iostream>
 
 #include "../headers/EnemyQueue.h"
+#include "../headers/Game.h"
 
 void EnemyQueue::initQueue(int size) {
     std::random_device generator;
     std::uniform_int_distribution<int> available_enemies(1, 11);
     std::uniform_int_distribution<int> available_bosses(1, 5);
 
-    for (int i = 1; i <= queue_size; i++) {
+    for (int i = 1; i <= size; i++) {
         int enemy_id_draw = available_enemies(generator);
-        Enemy* enemy = new Enemy(enemy_id_draw, i, 1);
+        Enemy* enemy = new Enemy(enemy_id_draw, i, 1, this->difficulty);
 
         this->enemies.push(enemy);
     }
 
     int boss_id_draw = available_bosses(generator);
 
-    Enemy* boss = new Enemy(boss_id_draw, size + 1, 2);
+    Enemy* boss = new Enemy(boss_id_draw, size + 1, 2, this->difficulty);
     this->enemies.push(boss);
 }
 
-EnemyQueue::EnemyQueue(int size): queue_size(size) {
+EnemyQueue::EnemyQueue(int &difficulty): difficulty(difficulty) {
+    int queue_size = 0;
+
+    switch (this->difficulty) {
+        case Difficulty::EASY:
+            queue_size = 5;
+            break;
+        case Difficulty::MEDIUM:
+            queue_size = 7;
+            break;
+        case Difficulty::HARD:
+            queue_size = 9;
+            break;
+    }
+
     initQueue(queue_size);
 }
 

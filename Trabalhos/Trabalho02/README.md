@@ -31,7 +31,6 @@ Estruturas de dados permitem armazenar, organizar e gerenciar conjuntos dinâmic
 
 - Finalizar Menus
 - Adicionar menus para a criação do nome de personagem/classe do personagem (opcional)
-- Bloquear o personagem de sair do mapa
 - Identificar a distância certa entre o player e o inimigo e iniciar uma batalha
 - Realizar a batalha, em caso de vitória do jogador, remover o inimigo da fila
 - Adicionar sistema de inventário como uma lista encadeada, realizar cálculo de drop de itens após o combate com um inimigo

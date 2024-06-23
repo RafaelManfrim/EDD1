@@ -32,10 +32,10 @@ private:
     void initPhysics();
 
 public:
-    Player(int &gender);
+    Player(int &gender, int &life, int &attack, int &defense, int &luck);
     virtual ~Player();
 
-    int &gender;
+    int &gender, &life, &attack, &defense, &luck;
 
     bool getAnimSwitch();
     const sf::Vector2f getPosition() const;

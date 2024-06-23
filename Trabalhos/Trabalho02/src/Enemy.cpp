@@ -75,6 +75,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 96;
             this->rotate = false;
             this->filename = "green_slime.png";
+            this->life = 2 + this->difficulty;
+            this->attack = 3;
+            this->defense = 2;
+            this->luck = 2;
             break;
         case Enemies::RED_SLIME:
             this->image_width = 672;
@@ -83,6 +87,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 96;
             this->rotate = false;
             this->filename = "red_slime.png";
+            this->life = 3;
+            this->attack = 3 + this->difficulty;
+            this->defense = 2;
+            this->luck = 1;
             break;
         case Enemies::BLUE_SLIME:
             this->image_width = 672;
@@ -91,6 +99,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 96;
             this->rotate = false;
             this->filename = "blue_slime.png";
+            this->life = 3;
+            this->attack = 2;
+            this->defense = 3 + this->difficulty;
+            this->luck = 1;
             break;
         case Enemies::CURSED_GREEN_SLIME:
             this->image_width = 160;
@@ -99,6 +111,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 32;
             this->rotate = false;
             this->filename = "cursed_green_slime.png";
+            this->life = 4 + this->difficulty;
+            this->attack = 2;
+            this->defense = 2;
+            this->luck = 1;
             break;
         case Enemies::FLYING_DEMON:
             this->image_width = 324;
@@ -107,6 +123,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 81;
             this->rotate = false;
             this->filename = "flying_demon.png";
+            this->life = 2;
+            this->attack = 3 + this->difficulty;
+            this->defense = 1;
+            this->luck = 3;
             break;
         case Enemies::FLYING_EYE:
             this->image_width = 1200;
@@ -115,6 +135,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 150;
             this->rotate = true;
             this->filename = "flying_eye.png";
+            this->life = 2;
+            this->attack = 3;
+            this->defense = 2;
+            this->luck = 2 + this->difficulty;
             break;
         case Enemies::MUSHROOM:
             this->image_width = 560;
@@ -123,6 +147,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 80;
             this->rotate = false;
             this->filename = "mushroom.png";
+            this->life = 3 + this->difficulty;
+            this->attack = 1;
+            this->defense = 4;
+            this->luck = 1;
             break;
         case Enemies::CURSED_MUSHROOM:
             this->image_width = 600;
@@ -131,6 +159,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 150;
             this->rotate = true;
             this->filename = "cursed_mushroom.png";
+            this->life = 1;
+            this->attack = 3 + this->difficulty;
+            this->defense = 1;
+            this->luck = 4;
             break;
         case Enemies::SKELETON_WARRIOR:
             this->image_width = 600;
@@ -139,6 +171,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 150;
             this->rotate = true;
             this->filename = "skeleton_warrior.png";
+            this->life = 1;
+            this->attack = 4;
+            this->defense = 3 + this->difficulty;
+            this->luck = 1;
             break;
         case Enemies::CURSED_SKELETON:
             this->image_width = 256;
@@ -147,6 +183,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 64;
             this->rotate = true;
             this->filename = "cursed_skeleton.png";
+            this->life = 3;
+            this->attack = 2 + this->difficulty;
+            this->defense = 3;
+            this->luck = 1;
             break;
         case Enemies::GOBLIN:
             this->image_width = 600;
@@ -155,6 +195,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 150;
             this->rotate = true;
             this->filename = "goblin.png";
+            this->life = 2;
+            this->attack = 2 + this->difficulty;
+            this->defense = 4;
+            this->luck = 1;
             break;
         default:
             this->image_width = 0;
@@ -163,6 +207,10 @@ void Enemy::getEnemyData() {
             this->sprite_width = 0;
             this->rotate = false;
             this->filename = "unknown.png";
+            this->life = 0;
+            this->attack = 0;
+            this->defense = 0;
+            this->luck = 0;
             break;
     }
 }
@@ -176,6 +224,10 @@ void Enemy::getBossData() {
             this->sprite_width = 250;
             this->rotate = true;
             this->filename = "evil_wizard.png";
+            this->life = 2 + this->difficulty;
+            this->attack = 3 + this->difficulty;
+            this->defense = 3;
+            this->luck = 2;
             break;
         case Bosses::NECROMANCER:
             this->image_width = 1280;
@@ -184,6 +236,10 @@ void Enemy::getBossData() {
             this->sprite_width = 160;
             this->rotate = true;
             this->filename = "necromancer.png";
+            this->life = 3 + this->difficulty;
+            this->attack = 3 + this->difficulty;
+            this->defense = 1;
+            this->luck = 3;
             break;
         case Bosses::KNIGHT:
             this->image_width = 800;
@@ -192,6 +248,10 @@ void Enemy::getBossData() {
             this->sprite_width = 100;
             this->rotate = true;
             this->filename = "knight.png";
+            this->life = 4 + this->difficulty;
+            this->attack = 1;
+            this->defense = 4 + this->difficulty;
+            this->luck = 1;
             break;
         case Bosses::NIGHT_BORNE:
             this->image_width = 720;
@@ -200,6 +260,10 @@ void Enemy::getBossData() {
             this->sprite_width = 80;
             this->rotate = true;
             this->filename = "night_borne.png";
+            this->life = 3 + this->difficulty;
+            this->attack = 3;
+            this->defense = 3;
+            this->luck = 1 + this->difficulty;
             break;
         case Bosses::BRINGER_OF_DEATH:
             this->image_width = 1120;
@@ -208,6 +272,10 @@ void Enemy::getBossData() {
             this->sprite_width = 140;
             this->rotate = false;
             this->filename = "bringer_of_death.png";
+            this->life = 1 + this->difficulty;
+            this->attack = 4;
+            this->defense = 4 + this->difficulty;
+            this->luck = 1;
             break;
         default:
             this->image_width = 0;
@@ -216,11 +284,19 @@ void Enemy::getBossData() {
             this->sprite_width = 0;
             this->rotate = false;
             this->filename = "unknown.png";
+            this->life = 0;
+            this->attack = 0;
+            this->defense = 0;
+            this->luck = 0;
             break;
     }
 }
 
-Enemy::Enemy(int enemy_id, int position, int type) : enemy_id(enemy_id), position(position), type(type) {
+int Enemy::getEnemyType() {
+    return this->type;
+}
+
+Enemy::Enemy(int enemy_id, int position, int type, int &difficulty) : enemy_id(enemy_id), position(position), type(type), difficulty(difficulty) {
     if(this->type == 1) {
         this->getEnemyData();
     } else if(this->type == 2) {

@@ -37,7 +37,7 @@ void Player::initPhysics() {
     this->drag = 0.70f;
 }
 
-Player::Player(int &gender): gender(gender) {
+Player::Player(int &gender, int &life, int &attack, int &defense, int &luck): gender(gender), life(life), attack(attack), defense(defense), luck(luck) {
     this->initVariables();
     this->initTexture();
     this->initSprite();

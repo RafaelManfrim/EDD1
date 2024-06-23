@@ -31,8 +31,11 @@ enum Bosses {
 
 class Enemy {
 public:
-    Enemy(int enemy_id, int position, int type);
+    Enemy(int enemy_id, int position, int type, int &difficulty);
     virtual ~Enemy();
+
+    int &difficulty;
+    int life, attack, defense, luck;
 
     const sf::Vector2f getPosition() const;
     const sf::FloatRect getGlobalBounds() const;
@@ -40,6 +43,7 @@ public:
 
     std::string getEnemyName();
     std::string getBossName(int boss_id);
+    int getEnemyType();
 
     void setPosition(const float x, const float y);
 
@@ -49,6 +53,7 @@ public:
 protected:
     int enemy_id;
     int type;
+
     int image_width, image_height, sprites_count, sprite_width;
     bool rotate;
     std::string filename;

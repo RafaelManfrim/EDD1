@@ -27,7 +27,7 @@ public:
     std::vector<sf::Text> labels_texts;
     std::vector<std::size_t> labels_sizes;
 
-    std::vector<const char *> stats_labels;
+    std::vector<std::string> stats_labels;
     std::vector<sf::Vector2f> stats_labels_coords;
     std::vector<sf::Text> stats_labels_texts;
     std::vector<std::size_t> stats_labels_sizes;
