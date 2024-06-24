@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Inventory.h"
+
 enum PLAYER_ANIMATION_STATES {IDLE = 0, MOVING_LEFT, MOVING_RIGHT};
 
 enum PlayerGender {
@@ -25,6 +27,10 @@ private:
     float acceleration;
     float drag;
 
+    Inventory inventory;
+
+    int item_in_use;
+
     void initVariables();
     void initTexture();
     void initSprite();
@@ -41,6 +47,15 @@ public:
     const sf::Vector2f getPosition() const;
     const sf::FloatRect getGlobalBounds() const;
     const sf::Vector2f getCenter() const;
+
+    void addItemToInventory(int type, int buff, int duration);
+    void removeItemFromInventory(const std::string& name);
+    void removeUsedItemFromInventory();
+    void displayInventory() const;
+    bool inventoryIsEmpty() const;
+    void useItem(int index);
+    Item getItemInUse() const;
+    void decrementItemDuration();
 
     void setPosition(const float x, const float y);
 

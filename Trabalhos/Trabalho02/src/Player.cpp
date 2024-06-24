@@ -43,6 +43,7 @@ Player::Player(int &gender, int &life, int &attack, int &defense, int &luck): ge
     this->initSprite();
     this->initAnimations();
     this->initPhysics();
+    this->item_in_use = 0;
 }
 
 Player::~Player() {
@@ -69,6 +70,28 @@ const sf::FloatRect Player::getGlobalBounds() const {
 const sf::Vector2f Player::getCenter() const {
     sf::FloatRect bounds = this->sprite.getGlobalBounds();
     return sf::Vector2f(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+}
+
+void Player::addItemToInventory(int type, int buff, int duration) {
+    std::string name = inventory.getItemNameByType(type);
+
+    inventory.addItem(name, buff, type, duration);
+}
+
+void Player::removeItemFromInventory(const std::string& name) {
+    inventory.removeItem(name);
+}
+
+void Player::displayInventory() const {
+    inventory.displayInventory();
+}
+
+bool Player::inventoryIsEmpty() const {
+    return inventory.isEmpty();
+}
+
+void Player::useItem(int index) {
+    this->item_in_use = index;
 }
 
 void Player::setPosition(const float x, const float y) {
@@ -163,11 +186,12 @@ void Player::update() {
 
 void Player::render(sf::RenderTarget & target) {
     target.draw(this->sprite);
+}
 
-//    sf::CircleShape circ;
-//    circ.setFillColor(sf::Color::Red);
-//    circ.setRadius(2.f);
-//    circ.setPosition(this->sprite.getPosition());
-//
-//    target.draw(circ);
+Item Player::getItemInUse() const {
+    return inventory.getItemByIndex(this->item_in_use);
+}
+
+void Player::decrementItemDuration() {
+    inventory.decrementDuration(this->item_in_use);
 }

@@ -4,10 +4,11 @@
 
 #include "../headers/Fighter.h"
 
-Fighter::Fighter(int &life, int &attack, int &defense, int &luck): life(life), attack(attack), defense(defense), luck(luck) {
+Fighter::Fighter(int &life, int &attack, int &defense, int &luck, int fighter_id):
+    life(life), attack(attack), defense(defense), luck(luck), fighter_id(fighter_id) {
     this->remaining_life = 100 + life * 20;
     this->remaining_bleeding_rounds = 0;
-    this->total_damage_caused = 0;
+    this->total_damage_dealt = 0;
 }
 
 Fighter::~Fighter() {
@@ -276,7 +277,11 @@ void Fighter::performAttack(Fighter &defender, int &dodges, int &special_attacks
     int dodge = dodge_possibility(generator);
     if(dodge == 0) {
         dodges++;
-//        std::cout << atacante.nickname << " ataca: " << std::endl << defensor.nickname << " desviou..." << std::endl;
+        if(this->fighter_id == 1) {
+            std::cout << "Você ataca, mas o inimigo desviou..." << std::endl;
+        } else {
+            std::cout << "O inimigo ataca, mas você desviou..." << std::endl;
+        }
         sleep(1);
         return;
     }
@@ -292,7 +297,11 @@ void Fighter::performAttack(Fighter &defender, int &dodges, int &special_attacks
 
     if(special_attack == 0) {
         special_attacks++;
-//        std::cout << atacante.nickname << " está usando o ataque " << atacante.special_attack << std::endl;
+        if(this->fighter_id == 1) {
+            std::cout << "Você ataca com um ataque especial..." << std::endl;
+        } else {
+            std::cout << "O inimigo ataca com um ataque especial..." << std::endl;
+        }
         sleep(1);
         damage = ceil(damage + damage * 0.4);
 
@@ -306,7 +315,12 @@ void Fighter::performAttack(Fighter &defender, int &dodges, int &special_attacks
             defender.applyBleeding(bleeding_turns);
         }
     } else {
-//        std::cout << atacante.nickname << " ataca: " << std::endl;
+        if(this->fighter_id == 1) {
+            std::cout << "Você ataca..." << std::endl;
+        } else {
+            std::cout << "O inimigo ataca..." << std::endl;
+        }
+
         sleep(1);
     }
 
@@ -318,8 +332,8 @@ int Fighter::getRemainingLife() {
     return this->remaining_life;
 }
 
-int Fighter::getTotalDamageCaused() {
-    return this->total_damage_caused;
+int Fighter::getTotalDamageDealt() {
+    return this->total_damage_dealt;
 }
 
 int Fighter::getRemainingBleedingRounds() {
@@ -335,7 +349,7 @@ void Fighter::takeDamage(int damage) {
 }
 
 void Fighter::increaseDamageDealt(int damage) {
-    this->total_damage_caused += damage;
+    this->total_damage_dealt += damage;
 }
 
 int Fighter::getLife() {

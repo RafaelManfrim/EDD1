@@ -2,7 +2,7 @@
 
 class Fighter {
 public:
-    Fighter(int &life, int &attack, int &defense, int &luck);
+    Fighter(int &life, int &attack, int &defense, int &luck, int fighter_id);
     ~Fighter();
 
     void performAttack(Fighter &defender, int &dodges, int &special_attacks);
@@ -12,7 +12,7 @@ public:
     void generateRandomSpecialAttackChanceRange(int &a, int &b);
 
     int getRemainingLife();
-    int getTotalDamageCaused();
+    int getTotalDamageDealt();
     int getRemainingBleedingRounds();
 
     void applyBleeding(int rounds);
@@ -24,10 +24,10 @@ public:
     int getDefense();
     int getLuck();
 private:
-    int &life, &attack, &defense, &luck;
+    int &life, &attack, &defense, &luck, fighter_id;
 
     int remaining_life;
     int remaining_bleeding_rounds;
-    int total_damage_caused;
+    int total_damage_dealt;
 };
 

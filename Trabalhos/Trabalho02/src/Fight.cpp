@@ -6,21 +6,44 @@
 
 
 Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
-//    std::cout << player.nickname << "(" << character_class_name(fighter1.character_class) << ")";
-//    cout << " x ";
-//    cout << fighter2.nickname << "(" << character_class_name(fighter2.character_class) << ")" << endl;
-
     std::cout << "Luta contra " << enemy.getEnemyName() << " iniciada!" << std::endl;
 
     std::random_device generator;
     std::uniform_int_distribution<int> first_attack_possibilities(1,2);
 
+    int life_buff = 0, attack_buff = 0, defense_buff = 0, luck_buff = 0;
+
+    switch(player.getItemInUse().type) {
+        case ItemType::LIFE:
+            life_buff = player.getItemInUse().buff;
+            break;
+        case ItemType::ATTACK:
+            attack_buff = player.getItemInUse().buff;
+            break;
+        case ItemType::DEFENSE:
+            defense_buff = player.getItemInUse().buff;
+            break;
+        case ItemType::LUCK:
+            luck_buff = player.getItemInUse().buff;
+            break;
+        default:
+            break;
+    }
+
+    player.life += life_buff;
+    player.attack += attack_buff;
+    player.defense += defense_buff;
+    player.luck += luck_buff;
+
     int turn = 1;
     this->winner = 0;
     int dodges = 0, special_attacks = 0;
 
-    this->player_fighter = new Fighter(player.life, player.attack, player.defense, player.luck);
-    this->enemy_fighter = new Fighter(enemy.life, enemy.attack, enemy.defense, enemy.luck);
+    this->player_fighter = new Fighter(player.life, player.attack, player.defense, player.luck, 1);
+    this->enemy_fighter = new Fighter(enemy.life, enemy.attack, enemy.defense, enemy.luck, 2);
+
+    std::cout << "Sua vida: " << player_fighter->getRemainingLife() << std::endl;
+    std::cout << "Vida de " << enemy.getEnemyName() << ": " << enemy_fighter->getRemainingLife() << std::endl;
 
     while (turn <= 10){
         std::cout << "Turno " << turn << " --------------------------- " << std::endl;
@@ -28,7 +51,7 @@ Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
 
         if(first_to_attack == 1) {
             if(enemy_fighter->getRemainingBleedingRounds() > 0) {
-                int bleeding_damage = ceil(enemy.life * 0.05 + player.attack * 2);
+                int bleeding_damage = ceil(enemy.life * 0.05 + (player.attack + attack_buff) * 2);
 
                 std::cout << enemy.getEnemyName() << " recebeu " << bleeding_damage << " de dano de sangramento." << std::endl;
                 sleep(1);
@@ -47,7 +70,7 @@ Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
             }
 
             if(player_fighter->getRemainingBleedingRounds() > 0) {
-                int bleeding_damage = ceil(player.life * 0.05 + enemy.attack * 2);
+                int bleeding_damage = ceil((player.life - life_buff) * 0.05 + enemy.attack * 2);
 
                 std::cout << "Você recebeu " << bleeding_damage << " de dano de sangramento." << std::endl;
                 sleep(1);
@@ -88,7 +111,7 @@ Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
             }
         } else if(first_to_attack == 2) {
             if(player_fighter->getRemainingBleedingRounds() > 0) {
-                int bleeding_damage = ceil(player.life * 0.05 + enemy.attack * 2);
+                int bleeding_damage = ceil((player.life - life_buff) * 0.05 + enemy.attack * 2);
 
                 std::cout << "Você recebeu " << bleeding_damage << " de dano de sangramento." << std::endl;
                 sleep(1);
@@ -107,7 +130,7 @@ Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
             }
 
             if(enemy_fighter->getRemainingBleedingRounds() > 0) {
-                int bleeding_damage = ceil(enemy.life * 0.05 + player.attack * 2);
+                int bleeding_damage = ceil(enemy.life * 0.05 + (player.attack + attack_buff) * 2);
 
                 std::cout << enemy.getEnemyName() << " recebeu " << bleeding_damage << " de dano de sangramento." << std::endl;
                 sleep(1);
@@ -151,22 +174,28 @@ Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
         turn++;
     }
 
+    player.life -= life_buff;
+    player.attack -= attack_buff;
+    player.defense -= defense_buff;
+    player.luck -= luck_buff;
 
     if (player_fighter->getRemainingLife() > 0 && enemy_fighter->getRemainingLife() > 0) {
-        if (player_fighter->getTotalDamageCaused() > enemy_fighter->getTotalDamageCaused()) {
+        if (player_fighter->getTotalDamageDealt() < enemy_fighter->getTotalDamageDealt()) {
             winner = 1;
         } else {
             winner = 2;
         }
     }
 
-    std::cout << "Seu dano: " << player_fighter->getTotalDamageCaused() << std::endl;
-    std::cout << "Dano " << enemy.getEnemyName() << ": " << enemy_fighter->getTotalDamageCaused() << std::endl;
+    std::cout << "Seu dano: " << enemy_fighter->getTotalDamageDealt() << std::endl;
+    std::cout << "Dano " << enemy.getEnemyName() << ": " << player_fighter->getTotalDamageDealt() << std::endl;
     std::cout << "Sua vida restante: " << player_fighter->getRemainingLife() << std::endl;
     std::cout << "Vida restante " << enemy.getEnemyName() << ": " << enemy_fighter->getRemainingLife() << std::endl;
     std::cout << "Turnos ocorridos: " << turn << std::endl;
     std::cout << "Quantidade de ataques especiais: " << special_attacks << std::endl;
     std::cout << "Quantidade de esquivas: " << dodges << std::endl << std::endl;
+
+    player.decrementItemDuration();
 
 //    if(winner == 1) {
 //        Character *temp = new Character[fighter1.num_defeated_characters + 1];

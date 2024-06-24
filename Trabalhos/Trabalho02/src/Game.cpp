@@ -6,7 +6,6 @@
 #include "../headers/DifficultyMenu.h"
 #include "../headers/GenderMenu.h"
 #include "../headers/AttributesMenu.h"
-#include "../headers/Fight.h"
 
 void Game::initWindow() {
     this->window.create(sf::VideoMode(1280, 720), "ED - T2", sf::Style::Close | sf::Style::Titlebar);
@@ -161,51 +160,58 @@ void Game::updateEnemies() {
 
         float distance = calculateDistance(this->player->getCenter(), enemies.front()->getCenter());
 
-//        if(distance <= 950) {
-//            this->movementDisabled = true;
-//
-//            if (this->fight == nullptr) {
-//                this->fight = new Fight(*this->player, *enemies.front());
-//
-//                if (this->fight->getWinner() == 1) {
-//                    if(enemies.front()->getEnemyType() == EnemyType::NORMAL) {
-//                        std::cout << "Você derrotou o inimigo!" << std::endl;
-//                    } else {
-//                        std::cout << "Você derrotou o boss!" << std::endl;
-//                    }
-//
-//                    this->movementDisabled = false;
-//                    this->enemyQueue->pop();
-//
-//                    delete this->fight;
-//                    this->fight = nullptr;
-//                } else {
-//                    delete this->fight;
-//                    this->fight = nullptr;
-//                }
-//            }
-//        }
-    }
+        if(distance <= 950) {
+            this->movementDisabled = true;
 
-//    std::vector<Enemy*> enemies = this->enemyQueue->getEnemies();
-//
-//    for (auto* enemy : enemies) {
-//        enemy->update();
-//
-//        float distanceX = calculateDistance(this->player->getCenter(), enemy->getCenter());
-//        std::cout << "Nome do inimigo: " << enemy->getEnemyName() << std::endl;
-//        std::cout << "Distância x para o inimigo: " << distanceX << std::endl;
-//    }
-//    if (!this->enemyQueue->isEmpty()) {
-//        Enemy* currentEnemy = this->enemyQueue->pop();
-//        currentEnemy->update();
-//
-////        if (currentEnemy->isDead()) {
-////            delete currentEnemy;
-////        } else {
-////            this->enemyQueue->push(currentEnemy);
-////        }
-//    }
+            if (this->fight == nullptr) {
+                int itemIndex;
+
+                if (!this->player->inventoryIsEmpty()) {
+                    std::cout << "Seu inventário: " << std::endl;
+                    this->player->displayInventory();
+
+                    std::cout << "Informe o número do item que você deseja usar nessa luta: ";
+                    std::cin >> itemIndex;
+
+                    this->player->useItem(itemIndex);
+                }
+
+                this->fight = new Fight(*this->player, *enemies.front());
+
+                if (this->fight->getWinner() == 1) {
+                    if(enemies.front()->getEnemyType() == EnemyType::BOSS) {
+                        std::cout << "Você venceu o jogo!" << std::endl;
+                    }
+
+                    std::random_device generator;
+                    std::uniform_int_distribution<int> drop_item_possibility(0,1);
+
+                    if(drop_item_possibility(generator) == 1) {
+                        std::cout << "Você ganhou um item!" << std::endl;
+
+                        std::uniform_int_distribution<int> item_possibility(1,4);
+                        int item_type = item_possibility(generator);
+
+                        std::uniform_int_distribution<int> item_duration(1,3);
+                        int duration = item_duration(generator);
+
+                        this->player->addItemToInventory(item_type, 1, duration);
+                    }
+
+                    this->movementDisabled = false;
+                    this->enemyQueue->pop();
+
+                    delete this->fight;
+                    this->fight = nullptr;
+                } else {
+                    std::cout << "Você perdeu!" << std::endl;
+
+                    delete this->fight;
+                    this->fight = nullptr;
+                }
+            }
+        }
+    }
 }
 
 void Game::update() {
@@ -221,8 +227,6 @@ void Game::update() {
     this->updateInput();
     this->updatePlayer();
     this->updateEnemies();
-
-//    this->updateTileMap();
 }
 
 void Game::renderBackground() {
@@ -251,13 +255,6 @@ void Game::renderEnemies() {
     for (auto* enemy : enemies) {
         enemy->render(this->window);
     }
-//    std::queue<Enemy*> tempQueue = this->enemyQueue->getQueue();
-//
-//    while (!tempQueue.empty()) {
-//        Enemy* currentEnemy = tempQueue.front();
-//        currentEnemy->render(this->window);
-//        tempQueue.pop();
-//    }
 }
 
 void Game::render() {
@@ -267,7 +264,6 @@ void Game::render() {
 
     this->renderBackground();
 
-//    this->renderTileMap();
     this->renderPlayer();
     this->renderEnemies();
 

@@ -326,32 +326,36 @@ const sf::Vector2f Enemy::getCenter() const {
 }
 
 std::string Enemy::getEnemyName() {
-    switch (this->enemy_id) {
-        case Enemies::GREEN_SLIME:
-            return "Green Slime";
-        case Enemies::RED_SLIME:
-            return "Red Slime";
-        case Enemies::BLUE_SLIME:
-            return "Blue Slime";
-        case Enemies::CURSED_GREEN_SLIME:
-            return "Cursed Green Slime";
-        case Enemies::FLYING_DEMON:
-            return "Flying Demon";
-        case Enemies::FLYING_EYE:
-            return "Flying Eye";
-        case Enemies::MUSHROOM:
-            return "Mushroom";
-        case Enemies::CURSED_MUSHROOM:
-            return "Cursed Mushroom";
-        case Enemies::SKELETON_WARRIOR:
-            return "Skeleton Warrior";
-        case Enemies::CURSED_SKELETON:
-            return "Cursed Skeleton";
-        case Enemies::GOBLIN:
-            return "Goblin";
-        default:
-            return "Unknown";
+    if(this->type == 1) {
+        switch (this->enemy_id) {
+            case Enemies::GREEN_SLIME:
+                return "Green Slime";
+            case Enemies::RED_SLIME:
+                return "Red Slime";
+            case Enemies::BLUE_SLIME:
+                return "Blue Slime";
+            case Enemies::CURSED_GREEN_SLIME:
+                return "Cursed Green Slime";
+            case Enemies::FLYING_DEMON:
+                return "Flying Demon";
+            case Enemies::FLYING_EYE:
+                return "Flying Eye";
+            case Enemies::MUSHROOM:
+                return "Mushroom";
+            case Enemies::CURSED_MUSHROOM:
+                return "Cursed Mushroom";
+            case Enemies::SKELETON_WARRIOR:
+                return "Skeleton Warrior";
+            case Enemies::CURSED_SKELETON:
+                return "Cursed Skeleton";
+            case Enemies::GOBLIN:
+                return "Goblin";
+            default:
+                return "Unknown";
+        }
     }
+
+    return this->getBossName(this->enemy_id);
 }
 
 std::string Enemy::getBossName(int boss_id) {
