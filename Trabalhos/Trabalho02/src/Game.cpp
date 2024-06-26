@@ -31,6 +31,8 @@ void Game::initEnemies() {
 }
 
 Game::Game() {
+    this->gameState = GameState::PLAYING;
+
     this->util = new Util();
 
     this->initWindow();
@@ -78,6 +80,13 @@ Game::Game() {
 
     this->initPlayer();
     this->initEnemies();
+
+    if (!this->music.openFromFile("../assets/music/music.ogg")) {
+        std::cout << "ERRO:MUSIC::Não foi possível carregar a música do game!" << "\n";
+    }
+
+    this->music.setLoop(true);
+    this->music.play();
 
     this->fight = nullptr;
 }
@@ -153,6 +162,10 @@ void Game::updateCamera() {
 }
 
 void Game::updateEnemies() {
+    if (this->gameState != GameState::PLAYING) {
+        return;
+    }
+
     std::vector<Enemy*> enemies = this->enemyQueue->getEnemies();
 
     if (!enemies.empty()) {
@@ -181,6 +194,17 @@ void Game::updateEnemies() {
                 if (this->fight->getWinner() == 1) {
                     if(enemies.front()->getEnemyType() == EnemyType::BOSS) {
                         std::cout << "Você venceu o jogo!" << std::endl;
+                        this->gameState = GameState::VICTORY;
+
+                        this->music.stop();
+
+                        if (!this->music.openFromFile("../assets/music/victory.ogg")) {
+                            std::cout << "ERRO:MUSIC::Não foi possível carregar a música de vitória!" << "\n";
+                        }
+
+                        this->music.play();
+
+                        return;
                     }
 
                     std::random_device generator;
@@ -205,6 +229,15 @@ void Game::updateEnemies() {
                     this->fight = nullptr;
                 } else {
                     std::cout << "Você perdeu!" << std::endl;
+                    this->gameState = GameState::DEFEAT;
+
+                    this->music.stop();
+
+                    if (!this->music.openFromFile("../assets/music/defeat.ogg")) {
+                        std::cout << "ERRO:MUSIC::Não foi possível carregar a música de derrota!" << "\n";
+                    }
+
+                    this->music.play();
 
                     delete this->fight;
                     this->fight = nullptr;
@@ -227,6 +260,11 @@ void Game::update() {
     this->updateInput();
     this->updatePlayer();
     this->updateEnemies();
+}
+
+void Game::resetCamera() {
+    this->camera.setCenter(640, 360);
+    this->window.setView(this->camera);
 }
 
 void Game::renderBackground() {
@@ -257,15 +295,49 @@ void Game::renderEnemies() {
     }
 }
 
+void Game::renderVictory() {
+    this->resetCamera();
+
+    backgroundTexture = sf::Texture();
+
+    if (!backgroundTexture.loadFromFile("../assets/sprites/victory-background.jpeg")) {
+        std::cout << "ERRO::BACKGROUND::Não foi possível carregar a imagem de vitória!" << "\n";
+    }
+
+    backgroundSprite.setTexture(backgroundTexture);
+    backgroundSprite.setPosition(0, 0);
+
+    this->window.draw(backgroundSprite);
+}
+
+void Game::renderDefeat() {
+    this->resetCamera();
+
+    backgroundTexture = sf::Texture();
+
+    if (!backgroundTexture.loadFromFile("../assets/sprites/defeat-background.jpeg")) {
+        std::cout << "ERRO::BACKGROUND::Não foi possível carregar a imagem de derrota!" << "\n";
+    }
+
+    backgroundSprite.setTexture(backgroundTexture);
+    backgroundSprite.setPosition(0, 0);
+
+    this->window.draw(backgroundSprite);
+}
+
 void Game::render() {
     this->window.clear();
 
-    this->window.setView(this->camera);
-
-    this->renderBackground();
-
-    this->renderPlayer();
-    this->renderEnemies();
+    if (this->gameState == GameState::PLAYING) {
+        this->window.setView(this->camera);
+        this->renderBackground();
+        this->renderPlayer();
+        this->renderEnemies();
+    } else if (this->gameState == GameState::VICTORY) {
+        this->renderVictory();
+    } else if (this->gameState == GameState::DEFEAT) {
+        this->renderDefeat();
+    }
 
     this->window.display();
 }

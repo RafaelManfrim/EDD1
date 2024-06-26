@@ -111,7 +111,7 @@ void Inventory::decrementDuration(int index) {
         counter++;
     }
 
-    if(current && current->item.duration > 0) {
+    if(current && current->item.duration > 1) {
         current->item.duration--;
     } else {
         removeItemByIndex(index);

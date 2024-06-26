@@ -7,6 +7,13 @@
 #include "./Fight.h"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+
+enum class GameState {
+    PLAYING,
+    VICTORY,
+    DEFEAT
+};
 
 enum Difficulty {
     EASY = 1,
@@ -17,6 +24,9 @@ enum Difficulty {
 class Game {
 
 private:
+    GameState gameState;
+    sf::Music music;
+
     sf::RenderWindow window;
     sf::Event ev;
     sf::View camera;
@@ -61,9 +71,15 @@ public:
     void updateCamera();
     void update();
 
+    void resetCamera();
+
     void renderBackground();
     void renderPlayer();
     void renderEnemies();
+
+    void renderVictory();
+    void renderDefeat();
+
     void render();
 
     const sf::RenderWindow& getWindow();

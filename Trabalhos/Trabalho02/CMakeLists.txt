@@ -12,4 +12,4 @@ file(GLOB SOURCES "src/*.cpp")
 
 add_executable(rpg-sfml-ed ${SOURCES})
 
-target_link_libraries(rpg-sfml-ed sfml-graphics sfml-window sfml-system)
+target_link_libraries(rpg-sfml-ed sfml-graphics sfml-window sfml-system sfml-audio)
