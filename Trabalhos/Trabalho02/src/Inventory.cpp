@@ -76,7 +76,7 @@ bool Inventory::isEmpty() const {
 std::string Inventory::getItemNameByType(int type) const {
     switch (type) {
         case ItemType::LIFE:
-            return "Armuleto de Vida";
+            return "Amuleto de Vida";
         case ItemType::ATTACK:
             return "Espada de Ataque";
         case ItemType::DEFENSE:
