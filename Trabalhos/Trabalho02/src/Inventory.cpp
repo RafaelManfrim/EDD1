@@ -89,14 +89,16 @@ std::string Inventory::getItemNameByType(int type) const {
 }
 
 Item Inventory::getItemByIndex(int index) const {
-    if (index == 0) return Item("", 0, 0, 0);
-
     Node* current = head;
     int counter = 1;
 
     while (current != nullptr && counter != index) {
         current = current->next;
         counter++;
+    }
+
+    if (current == nullptr || index == 0 || index == -1) {
+        return Item("", 0, 0, 0);
     }
 
     return current->item;
@@ -116,4 +118,16 @@ void Inventory::decrementDuration(int index) {
     } else {
         removeItemByIndex(index);
     }
+}
+
+int Inventory::getSize() {
+    Node* current = head;
+    int counter = 0;
+
+    while (current != nullptr) {
+        current = current->next;
+        counter++;
+    }
+
+    return counter;
 }

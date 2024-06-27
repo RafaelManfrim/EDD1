@@ -59,6 +59,9 @@ public:
 
     bool movementDisabled;
 
+    bool waitingForItemSelection;
+    int selectedItemIndex;
+
     EnemyQueue* enemyQueue;
 
     void getMapSizeByDifficulty(int difficulty_id);

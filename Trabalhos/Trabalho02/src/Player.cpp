@@ -195,3 +195,7 @@ Item Player::getItemInUse() const {
 void Player::decrementItemDuration() {
     inventory.decrementDuration(this->item_in_use);
 }
+
+int Player::getInventorySize() {
+    return inventory.getSize();
+}

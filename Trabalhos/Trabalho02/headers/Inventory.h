@@ -39,6 +39,7 @@ public:
     void displayInventory() const;
     bool isEmpty() const;
     void decrementDuration(int index);
+    int getSize();
 
     std::string getItemNameByType(int type) const;
 

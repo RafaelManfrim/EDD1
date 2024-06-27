@@ -50,12 +50,12 @@ public:
 
     void addItemToInventory(int type, int buff, int duration);
     void removeItemFromInventory(const std::string& name);
-    void removeUsedItemFromInventory();
     void displayInventory() const;
     bool inventoryIsEmpty() const;
     void useItem(int index);
     Item getItemInUse() const;
     void decrementItemDuration();
+    int getInventorySize();
 
     void setPosition(const float x, const float y);
 

@@ -89,6 +89,9 @@ Game::Game() {
     this->music.play();
 
     this->fight = nullptr;
+
+    this->waitingForItemSelection = false;
+    this->selectedItemIndex = -1;
 }
 
 Game::~Game() {
@@ -177,70 +180,68 @@ void Game::updateEnemies() {
             this->movementDisabled = true;
 
             if (this->fight == nullptr) {
-                int itemIndex;
-
-                if (!this->player->inventoryIsEmpty()) {
+                if (!this->player->inventoryIsEmpty() && !this->waitingForItemSelection && this->selectedItemIndex == -1) {
                     std::cout << "Seu inventário: " << std::endl;
                     this->player->displayInventory();
-
                     std::cout << "Informe o número do item que você deseja usar nessa luta: ";
-                    std::cin >> itemIndex;
-
-                    this->player->useItem(itemIndex);
+                    this->waitingForItemSelection = true;
                 }
 
-                this->fight = new Fight(*this->player, *enemies.front());
+                if(!this->waitingForItemSelection) {
+                    this->fight = new Fight(*this->player, *enemies.front());
 
-                if (this->fight->getWinner() == 1) {
-                    if(enemies.front()->getEnemyType() == EnemyType::BOSS) {
-                        std::cout << "Você venceu o jogo!" << std::endl;
-                        this->gameState = GameState::VICTORY;
+                    if (this->fight->getWinner() == 1) {
+                        if(enemies.front()->getEnemyType() == EnemyType::BOSS) {
+                            std::cout << "Você venceu o jogo!" << std::endl;
+                            this->gameState = GameState::VICTORY;
+
+                            this->music.stop();
+
+                            if (!this->music.openFromFile("../assets/music/victory.ogg")) {
+                                std::cout << "ERRO:MUSIC::Não foi possível carregar a música de vitória!" << "\n";
+                            }
+
+                            this->music.play();
+
+                            return;
+                        }
+
+                        std::random_device generator;
+                        std::uniform_int_distribution<int> drop_item_possibility(0,1);
+
+                        if(drop_item_possibility(generator) == 1) {
+                            std::cout << "Você ganhou um item!" << std::endl;
+
+                            std::uniform_int_distribution<int> item_possibility(1,4);
+                            int item_type = item_possibility(generator);
+
+                            std::uniform_int_distribution<int> item_duration(1,3);
+                            int duration = item_duration(generator);
+
+                            this->player->addItemToInventory(item_type, 1, duration);
+                        }
+
+                        this->selectedItemIndex = -1;
+                        this->movementDisabled = false;
+                        this->enemyQueue->pop();
+
+                        delete this->fight;
+                        this->fight = nullptr;
+                    } else {
+                        std::cout << "Você perdeu!" << std::endl;
+                        this->gameState = GameState::DEFEAT;
 
                         this->music.stop();
 
-                        if (!this->music.openFromFile("../assets/music/victory.ogg")) {
-                            std::cout << "ERRO:MUSIC::Não foi possível carregar a música de vitória!" << "\n";
+                        if (!this->music.openFromFile("../assets/music/defeat.ogg")) {
+                            std::cout << "ERRO:MUSIC::Não foi possível carregar a música de derrota!" << "\n";
                         }
 
                         this->music.play();
 
-                        return;
+                        delete this->fight;
+                        this->fight = nullptr;
                     }
-
-                    std::random_device generator;
-                    std::uniform_int_distribution<int> drop_item_possibility(0,1);
-
-                    if(drop_item_possibility(generator) == 1) {
-                        std::cout << "Você ganhou um item!" << std::endl;
-
-                        std::uniform_int_distribution<int> item_possibility(1,4);
-                        int item_type = item_possibility(generator);
-
-                        std::uniform_int_distribution<int> item_duration(1,3);
-                        int duration = item_duration(generator);
-
-                        this->player->addItemToInventory(item_type, 1, duration);
-                    }
-
-                    this->movementDisabled = false;
-                    this->enemyQueue->pop();
-
-                    delete this->fight;
-                    this->fight = nullptr;
-                } else {
-                    std::cout << "Você perdeu!" << std::endl;
-                    this->gameState = GameState::DEFEAT;
-
-                    this->music.stop();
-
-                    if (!this->music.openFromFile("../assets/music/defeat.ogg")) {
-                        std::cout << "ERRO:MUSIC::Não foi possível carregar a música de derrota!" << "\n";
-                    }
-
-                    this->music.play();
-
-                    delete this->fight;
-                    this->fight = nullptr;
                 }
             }
         }
@@ -253,6 +254,25 @@ void Game::update() {
             this->window.close();
         } else if (this->ev.type == sf::Event::KeyPressed && this->ev.key.code == sf::Keyboard::Escape) {
             this->window.close();
+        } else if (
+                this->waitingForItemSelection &&
+                (this->ev.key.code == sf::Keyboard::Num1 ||
+                this->ev.key.code == sf::Keyboard::Num2 ||
+                this->ev.key.code == sf::Keyboard::Num3 ||
+                this->ev.key.code == sf::Keyboard::Num4 ||
+                this->ev.key.code == sf::Keyboard::Num5 ||
+                this->ev.key.code == sf::Keyboard::Num6 ||
+                this->ev.key.code == sf::Keyboard::Num7 ||
+                this->ev.key.code == sf::Keyboard::Num8 ||
+                this->ev.key.code == sf::Keyboard::Num9)
+                ) {
+            selectedItemIndex = this->ev.key.code - 26;
+            if(selectedItemIndex > this->player->getInventorySize()) {
+                selectedItemIndex = -1;
+                return;
+            }
+            this->player->useItem(selectedItemIndex);
+            this->waitingForItemSelection = false;
         }
     }
 
