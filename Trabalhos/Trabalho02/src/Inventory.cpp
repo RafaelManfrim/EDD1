@@ -1,6 +1,6 @@
 #include "../headers/Inventory.h"
 
-Inventory::Inventory(): head(nullptr) {}
+Inventory::Inventory(Util* util): head(nullptr), util(util) {}
 
 Inventory::~Inventory() {
     Node* current = head;
@@ -63,7 +63,7 @@ void Inventory::displayInventory() const {
     Node* current = head;
     int counter = 1;
     while (current != nullptr) {
-        std::cout << counter << " - Item: " << current->item.name << ", Bonus: " << current->item.buff << ", pode ser usado por mais " << current->item.duration << " lutas" << std::endl;
+        this->util->addTextToList(std::to_string(counter) + " - Item: " + current->item.name + ", Bonus: " + std::to_string(current->item.buff) + ", pode ser usado por mais " + std::to_string(current->item.duration) + " lutas");
         current = current->next;
         counter++;
     }

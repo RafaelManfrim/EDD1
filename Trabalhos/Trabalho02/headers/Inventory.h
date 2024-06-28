@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "Util.h"
+
 enum ItemType {
     LIFE = 1,
     ATTACK = 2,
@@ -28,9 +30,10 @@ public:
 
 class Inventory {
 public:
-    Inventory();
+    Inventory(Util* util);
     ~Inventory();
 
+    Util* util;
     Item getItemByIndex(int index) const;
 
     void addItem(const std::string& name, int buff, int type, int duration);

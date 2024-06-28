@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include <unistd.h>
 
 #include "../headers/Game.h"
 #include "../headers/Menu.h"
@@ -19,7 +20,7 @@ void Game::initInput() {
 }
 
 void Game::initPlayer() {
-    this->player = new Player(this->gender, this->player_life, this->player_attack, this->player_defense, this->player_luck);
+    this->player = new Player(this->util, this->gender, this->player_life, this->player_attack, this->player_defense, this->player_luck);
 }
 
 void Game::initCamera() {
@@ -33,11 +34,11 @@ void Game::initEnemies() {
 Game::Game() {
     this->gameState = GameState::PLAYING;
 
-    this->util = new Util();
-
     this->initWindow();
     this->initCamera();
     this->initInput();
+
+    this->util = new Util(this->window, this->camera);
 
     Menu * menu = new Menu(this->window, this->util);
     menu->run_menu();
@@ -91,6 +92,7 @@ Game::Game() {
     this->fight = nullptr;
 
     this->waitingForItemSelection = false;
+    this->waitingForConfirmation = false;
     this->selectedItemIndex = -1;
 }
 
@@ -181,18 +183,19 @@ void Game::updateEnemies() {
 
             if (this->fight == nullptr) {
                 if (!this->player->inventoryIsEmpty() && !this->waitingForItemSelection && this->selectedItemIndex == -1) {
-                    std::cout << "Seu inventário: " << std::endl;
+                    this->util->addTextToList("Seu inventario: ");
                     this->player->displayInventory();
-                    std::cout << "Informe o número do item que você deseja usar nessa luta: ";
+                    this->util->addTextToList("Informe o numero do item que voce deseja usar nessa luta: ");
+                    this->renderGameWithText();
                     this->waitingForItemSelection = true;
                 }
 
                 if(!this->waitingForItemSelection) {
-                    this->fight = new Fight(*this->player, *enemies.front());
+                    this->fight = new Fight(this->window, *this->player, *enemies.front(), this->util, this->map_size);
 
                     if (this->fight->getWinner() == 1) {
                         if(enemies.front()->getEnemyType() == EnemyType::BOSS) {
-                            std::cout << "Você venceu o jogo!" << std::endl;
+                            this->util->resetTexts();
                             this->gameState = GameState::VICTORY;
 
                             this->music.stop();
@@ -210,7 +213,8 @@ void Game::updateEnemies() {
                         std::uniform_int_distribution<int> drop_item_possibility(0,1);
 
                         if(drop_item_possibility(generator) == 1) {
-                            std::cout << "Você ganhou um item!" << std::endl;
+                            this->util->addTextToList("Voce ganhou um item!");
+                            this->renderGameWithText();
 
                             std::uniform_int_distribution<int> item_possibility(1,4);
                             int item_type = item_possibility(generator);
@@ -221,6 +225,10 @@ void Game::updateEnemies() {
                             this->player->addItemToInventory(item_type, 1, duration);
                         }
 
+                        sleep(2);
+
+                        this->util->resetTexts();
+
                         this->selectedItemIndex = -1;
                         this->movementDisabled = false;
                         this->enemyQueue->pop();
@@ -228,7 +236,7 @@ void Game::updateEnemies() {
                         delete this->fight;
                         this->fight = nullptr;
                     } else {
-                        std::cout << "Você perdeu!" << std::endl;
+                        this->util->resetTexts();
                         this->gameState = GameState::DEFEAT;
 
                         this->music.stop();
@@ -351,6 +359,11 @@ void Game::render() {
     if (this->gameState == GameState::PLAYING) {
         this->window.setView(this->camera);
         this->renderBackground();
+
+        if(this->waitingForItemSelection) {
+            this->util->renderTexts();
+        }
+
         this->renderPlayer();
         this->renderEnemies();
     } else if (this->gameState == GameState::VICTORY) {
@@ -359,6 +372,16 @@ void Game::render() {
         this->renderDefeat();
     }
 
+    this->window.display();
+}
+
+void Game::renderGameWithText() {
+    this->window.clear();
+    this->window.setView(this->camera);
+    this->renderBackground();
+    this->renderPlayer();
+    this->renderEnemies();
+    this->util->renderTexts();
     this->window.display();
 }
 

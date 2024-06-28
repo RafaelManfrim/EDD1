@@ -53,12 +53,18 @@ void Enemy::initSprite() {
             } else if (this->filename == "night_borne.png") {
                 this->sprite.setScale(-8.f, 8.f);
             }
-        } else {
-            this->sprite.setScale(7.f, 7.f);
         }
+
+//        else {
+//            this->sprite.setScale(7.f, 7.f);
+//        }
     }
 
     this->sprite.setPosition(this->sprite.getPosition().x + 1600 * position, 720 - this->getGlobalBounds().height - 131);
+
+//    if (this->filename == "bringer_of_death.png") {
+//        this->setPosition(this->getPosition().x - 400, this->getPosition().y);
+//    }
 }
 
 void Enemy::initAnimations() {
@@ -80,30 +86,30 @@ void Enemy::getEnemyData() {
             this->defense = 2;
             this->luck = 2;
             break;
-        case Enemies::RED_SLIME:
-            this->image_width = 672;
-            this->image_height = 32;
-            this->sprites_count = 7;
-            this->sprite_width = 96;
-            this->rotate = false;
-            this->filename = "red_slime.png";
-            this->life = 3;
-            this->attack = 3 + this->difficulty;
-            this->defense = 2;
-            this->luck = 1;
-            break;
-        case Enemies::BLUE_SLIME:
-            this->image_width = 672;
-            this->image_height = 32;
-            this->sprites_count = 7;
-            this->sprite_width = 96;
-            this->rotate = false;
-            this->filename = "blue_slime.png";
-            this->life = 3;
-            this->attack = 2;
-            this->defense = 3 + this->difficulty;
-            this->luck = 1;
-            break;
+//        case Enemies::RED_SLIME:
+//            this->image_width = 672;
+//            this->image_height = 32;
+//            this->sprites_count = 7;
+//            this->sprite_width = 96;
+//            this->rotate = false;
+//            this->filename = "red_slime.png";
+//            this->life = 3;
+//            this->attack = 3 + this->difficulty;
+//            this->defense = 2;
+//            this->luck = 1;
+//            break;
+//        case Enemies::BLUE_SLIME:
+//            this->image_width = 672;
+//            this->image_height = 32;
+//            this->sprites_count = 7;
+//            this->sprite_width = 96;
+//            this->rotate = false;
+//            this->filename = "blue_slime.png";
+//            this->life = 3;
+//            this->attack = 2;
+//            this->defense = 3 + this->difficulty;
+//            this->luck = 1;
+//            break;
         case Enemies::CURSED_GREEN_SLIME:
             this->image_width = 160;
             this->image_height = 32;
@@ -265,18 +271,18 @@ void Enemy::getBossData() {
             this->defense = 3;
             this->luck = 1 + this->difficulty;
             break;
-        case Bosses::BRINGER_OF_DEATH:
-            this->image_width = 1120;
-            this->image_height = 64;
-            this->sprites_count = 8;
-            this->sprite_width = 140;
-            this->rotate = false;
-            this->filename = "bringer_of_death.png";
-            this->life = 1 + this->difficulty;
-            this->attack = 4;
-            this->defense = 4 + this->difficulty;
-            this->luck = 1;
-            break;
+//        case Bosses::BRINGER_OF_DEATH:
+//            this->image_width = 1120;
+//            this->image_height = 64;
+//            this->sprites_count = 8;
+//            this->sprite_width = 140;
+//            this->rotate = false;
+//            this->filename = "bringer_of_death.png";
+//            this->life = 1 + this->difficulty;
+//            this->attack = 4;
+//            this->defense = 4 + this->difficulty;
+//            this->luck = 1;
+//            break;
         default:
             this->image_width = 0;
             this->image_height = 0;
@@ -330,10 +336,10 @@ std::string Enemy::getEnemyName() {
         switch (this->enemy_id) {
             case Enemies::GREEN_SLIME:
                 return "Green Slime";
-            case Enemies::RED_SLIME:
-                return "Red Slime";
-            case Enemies::BLUE_SLIME:
-                return "Blue Slime";
+//            case Enemies::RED_SLIME:
+//                return "Red Slime";
+//            case Enemies::BLUE_SLIME:
+//                return "Blue Slime";
             case Enemies::CURSED_GREEN_SLIME:
                 return "Cursed Green Slime";
             case Enemies::FLYING_DEMON:
@@ -368,8 +374,8 @@ std::string Enemy::getBossName(int boss_id) {
             return "Knight";
         case Bosses::NIGHT_BORNE:
             return "Night Borne";
-        case Bosses::BRINGER_OF_DEATH:
-            return "Bringer of Death";
+//        case Bosses::BRINGER_OF_DEATH:
+//            return "Bringer of Death";
         default:
             return "Unknown";
     }

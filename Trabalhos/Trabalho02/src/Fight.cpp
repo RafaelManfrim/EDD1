@@ -5,8 +5,11 @@
 #include "../headers/Fight.h"
 
 
-Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
-    std::cout << "Luta contra " << enemy.getEnemyName() << " iniciada!" << std::endl;
+Fight::Fight(sf::RenderWindow &window, Player& player, Enemy& enemy, Util* util, int map_size):
+    window(window), player(player), enemy(enemy), util(util), map_size(map_size) {
+
+    util->addTextToList("Luta contra " + enemy.getEnemyName() + " iniciada!");
+    this->update();
 
     std::random_device generator;
     std::uniform_int_distribution<int> first_attack_possibilities(1,2);
@@ -39,31 +42,37 @@ Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
     this->winner = 0;
     int dodges = 0, special_attacks = 0;
 
-    this->player_fighter = new Fighter(player.life, player.attack, player.defense, player.luck, 1);
-    this->enemy_fighter = new Fighter(enemy.life, enemy.attack, enemy.defense, enemy.luck, 2);
+    this->player_fighter = new Fighter(this->util, player.life, player.attack, player.defense, player.luck, 1);
+    this->enemy_fighter = new Fighter(this->util, enemy.life, enemy.attack, enemy.defense, enemy.luck, 2);
 
-    std::cout << "Sua vida: " << player_fighter->getRemainingLife() << std::endl;
-    std::cout << "Vida de " << enemy.getEnemyName() << ": " << enemy_fighter->getRemainingLife() << std::endl;
+    this->util->addTextToList("Sua vida: " + std::to_string(player_fighter->getRemainingLife()));
+    this->util->addTextToList("Vida de " + enemy.getEnemyName() + ": " + std::to_string(enemy_fighter->getRemainingLife()));
+    this->update();
+
+    this->player.resetAnimationTimer();
 
     while (turn <= 10){
-        std::cout << "Turno " << turn << " --------------------------- " << std::endl;
+        this->util->addTextToList("Turno " + std::to_string(turn));
+        this->update();
+
         int first_to_attack = first_attack_possibilities(generator);
 
         if(first_to_attack == 1) {
             if(enemy_fighter->getRemainingBleedingRounds() > 0) {
                 int bleeding_damage = ceil(enemy.life * 0.05 + (player.attack + attack_buff) * 2);
 
-                std::cout << enemy.getEnemyName() << " recebeu " << bleeding_damage << " de dano de sangramento." << std::endl;
-                sleep(1);
+                this->util->addTextToList(enemy.getEnemyName() + " recebeu " + std::to_string(bleeding_damage) + " de dano de sangramento.");
+                this->update();
 
                 enemy_fighter->takeDamage(bleeding_damage);
                 enemy_fighter->applyBleeding(-1);
 
-                std::cout << "Vida restante de " << enemy.getEnemyName() << ": " << enemy_fighter->getRemainingLife() << std::endl;
+                this->util->addTextToList("Vida restante de " + enemy.getEnemyName() + ": " + std::to_string(enemy_fighter->getRemainingLife()));
+                this->update();
 
                 if(enemy_fighter->getRemainingLife() <= 0) {
-                    std::cout << "Você venceu!!!" << std::endl;
-                    sleep(1);
+                    this->util->addTextToList("Voce venceu!!!");
+                    this->update();
                     winner = 1;
                     break;
                 }
@@ -72,40 +81,47 @@ Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
             if(player_fighter->getRemainingBleedingRounds() > 0) {
                 int bleeding_damage = ceil((player.life - life_buff) * 0.05 + enemy.attack * 2);
 
-                std::cout << "Você recebeu " << bleeding_damage << " de dano de sangramento." << std::endl;
-                sleep(1);
+                this->util->addTextToList("Voce recebeu " + std::to_string(bleeding_damage) + " de dano de sangramento.");
+                this->update();
 
                 player_fighter->takeDamage(bleeding_damage);
                 player_fighter->applyBleeding(-1);
 
-                std::cout << "Sua vida restante: " << player_fighter->getRemainingLife() << std::endl;
+                this->util->addTextToList("Sua vida restante: " + std::to_string(player_fighter->getRemainingLife()));
+                this->update();
 
                 if(player_fighter->getRemainingLife() <= 0) {
-                    std::cout << "Você perdeu..." << std::endl;
-                    sleep(1);
+                    this->util->addTextToList("Voce perdeu...");
+                    this->update();
                     winner = 2;
                     break;
                 }
             }
 
             player_fighter->performAttack(*enemy_fighter, dodges, special_attacks);
+            this->update();
+            sleep(1);
 
-            std::cout << "Vida restante de " << enemy.getEnemyName() << ": " << enemy_fighter->getRemainingLife() << std::endl;
+            this->util->addTextToList("Vida restante de " + enemy.getEnemyName() + ": " + std::to_string(enemy_fighter->getRemainingLife()));
+            this->update();
 
             if(enemy_fighter->getRemainingLife() <= 0) {
-                std::cout << "Você venceu!!!" << std::endl;
-                sleep(1);
+                this->util->addTextToList("Voce venceu!!!");
+                this->update();
                 winner = 1;
                 break;
             }
 
             enemy_fighter->performAttack(*player_fighter, dodges, special_attacks);
+            this->update();
+            sleep(1);
 
-            std::cout << "Sua vida restante: " << player_fighter->getRemainingLife() << std::endl;
+            this->util->addTextToList("Sua vida restante: " + std::to_string(player_fighter->getRemainingLife()));
+            this->update();
 
             if(player_fighter->getRemainingLife() <= 0) {
-                std::cout << "Você perdeu..." << std::endl;
-                sleep(1);
+                this->util->addTextToList("Voce perdeu...");
+                this->update();
                 winner = 2;
                 break;
             }
@@ -113,17 +129,18 @@ Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
             if(player_fighter->getRemainingBleedingRounds() > 0) {
                 int bleeding_damage = ceil((player.life - life_buff) * 0.05 + enemy.attack * 2);
 
-                std::cout << "Você recebeu " << bleeding_damage << " de dano de sangramento." << std::endl;
-                sleep(1);
+                this->util->addTextToList("Voce recebeu " + std::to_string(bleeding_damage) + " de dano de sangramento.");
+                this->update();
 
                 player_fighter->takeDamage(bleeding_damage);
                 player_fighter->applyBleeding(-1);
 
-                std::cout << "Sua vida restante: " << player_fighter->getRemainingLife() << std::endl;
+                this->util->addTextToList("Sua vida restante: " + std::to_string(player_fighter->getRemainingLife()));
+                this->update();
 
                 if(player_fighter->getRemainingLife() <= 0) {
-                    std::cout << "Você perdeu..." << std::endl;
-                    sleep(1);
+                    this->util->addTextToList("Voce perdeu...");
+                    this->update();
                     winner = 2;
                     break;
                 }
@@ -132,46 +149,54 @@ Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
             if(enemy_fighter->getRemainingBleedingRounds() > 0) {
                 int bleeding_damage = ceil(enemy.life * 0.05 + (player.attack + attack_buff) * 2);
 
-                std::cout << enemy.getEnemyName() << " recebeu " << bleeding_damage << " de dano de sangramento." << std::endl;
-                sleep(1);
+                this->util->addTextToList(enemy.getEnemyName() + " recebeu " + std::to_string(bleeding_damage) + " de dano de sangramento.");
+                this->update();
 
                 enemy_fighter->takeDamage(bleeding_damage);
                 enemy_fighter->applyBleeding(-1);
 
-                std::cout << "Vida restante de " << enemy.getEnemyName() << ": " << enemy_fighter->getRemainingLife() << std::endl;
+                this->util->addTextToList("Vida restante de " + enemy.getEnemyName() + ": " + std::to_string(enemy_fighter->getRemainingLife()));
+                this->update();
 
                 if(enemy_fighter->getRemainingLife() <= 0) {
-                    std::cout << "Você venceu!!!" << std::endl;
-                    sleep(1);
+                    this->util->addTextToList("Voce venceu!!!");
+                    this->update();
                     winner = 1;
                     break;
                 }
             }
 
-
             enemy_fighter->performAttack(*player_fighter, dodges, special_attacks);
+            this->update();
+            sleep(1);
 
-            std::cout << "Sua vida restante: " << player_fighter->getRemainingLife() << std::endl;
+            this->util->addTextToList("Sua vida restante: " + std::to_string(player_fighter->getRemainingLife()));
+            this->update();
 
             if(player_fighter->getRemainingLife() <= 0) {
-                std::cout << "Você perdeu..." << std::endl;
-                sleep(1);
+                this->util->addTextToList("Voce perdeu...");
+                this->update();
                 winner = 2;
                 break;
             }
 
             player_fighter->performAttack(*enemy_fighter, dodges, special_attacks);
+            this->update();
+            sleep(1);
 
-            std::cout << "Vida restante de " << enemy.getEnemyName() << ": " << enemy_fighter->getRemainingLife() << std::endl;
+            this->util->addTextToList("Vida restante de " + enemy.getEnemyName() + ": " + std::to_string(enemy_fighter->getRemainingLife()));
+            this->update();
 
             if(enemy_fighter->getRemainingLife() <= 0) {
-                std::cout << "Você venceu!!!" << std::endl;
-                sleep(1);
+                this->util->addTextToList("Voce venceu!!!");
+                this->update();
                 winner = 1;
                 break;
             }
         }
         turn++;
+
+        sleep(1);
     }
 
     player.life -= life_buff;
@@ -196,34 +221,6 @@ Fight::Fight(Player& player, Enemy& enemy): player(player), enemy(enemy) {
     std::cout << "Quantidade de esquivas: " << dodges << std::endl << std::endl;
 
     player.decrementItemDuration();
-
-//    if(winner == 1) {
-//        Character *temp = new Character[fighter1.num_defeated_characters + 1];
-//
-//        for (int i = 0; i < fighter1.num_defeated_characters; i++) {
-//            temp[i] = fighter1.defeated_characters[i];
-//        }
-//
-//        temp[fighter1.num_defeated_characters] = fighter2;
-//        delete[] fighter1.defeated_characters;
-//        fighter1.defeated_characters = temp;
-//        fighter1.num_defeated_characters++;
-//
-//        return fighter1;
-//    }
-//
-//    Character *temp = new Character[fighter2.num_defeated_characters + 1];
-//
-//    for (int i = 0; i < fighter2.num_defeated_characters; i++) {
-//        temp[i] = fighter2.defeated_characters[i];
-//    }
-//
-//    temp[fighter2.num_defeated_characters] = fighter1;
-//    delete[] fighter2.defeated_characters;
-//    fighter2.defeated_characters = temp;
-//    fighter2.num_defeated_characters++;
-//
-//    return fighter2;
 }
 
 Fight::~Fight() {
@@ -233,4 +230,31 @@ Fight::~Fight() {
 
 int Fight::getWinner() {
     return this->winner;
+}
+
+void Fight::renderBackground() {
+    if (!backgroundTexture.loadFromFile("../assets/sprites/game-background.png")) {
+        std::cout << "ERRO::BACKGROUND::Não foi possível carregar o background do game!" << "\n";
+    }
+
+    backgroundSprite.setTexture(backgroundTexture);
+
+    float backgroundWidth = float (backgroundTexture.getSize().x);
+    int horizontalTiles = static_cast<int>(std::ceil(float (map_size) / backgroundWidth)) + 1;
+
+    for (int i = 0; i < horizontalTiles; ++i) {
+        backgroundSprite.setPosition(float (i) * backgroundWidth, 0);
+        this->window.draw(backgroundSprite);
+    }
+}
+
+void Fight::update() {
+    this->window.clear();
+    this->renderBackground();
+    this->player.update();
+    this->player.render(this->window);
+    this->enemy.update();
+    this->enemy.render(this->window);
+    util->renderTexts();
+    this->window.display();
 }

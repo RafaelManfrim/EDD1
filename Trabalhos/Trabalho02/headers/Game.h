@@ -60,6 +60,7 @@ public:
     bool movementDisabled;
 
     bool waitingForItemSelection;
+    bool waitingForConfirmation;
     int selectedItemIndex;
 
     EnemyQueue* enemyQueue;
@@ -82,6 +83,8 @@ public:
 
     void renderVictory();
     void renderDefeat();
+
+    void renderGameWithText();
 
     void render();
 

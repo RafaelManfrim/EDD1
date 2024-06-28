@@ -37,12 +37,13 @@ void Player::initPhysics() {
     this->drag = 0.70f;
 }
 
-Player::Player(int &gender, int &life, int &attack, int &defense, int &luck): gender(gender), life(life), attack(attack), defense(defense), luck(luck) {
+Player::Player(Util* util, int &gender, int &life, int &attack, int &defense, int &luck): util(util), gender(gender), life(life), attack(attack), defense(defense), luck(luck) {
     this->initVariables();
     this->initTexture();
     this->initSprite();
     this->initAnimations();
     this->initPhysics();
+    this->inventory = new Inventory(this->util);
     this->item_in_use = 0;
 }
 
@@ -73,21 +74,21 @@ const sf::Vector2f Player::getCenter() const {
 }
 
 void Player::addItemToInventory(int type, int buff, int duration) {
-    std::string name = inventory.getItemNameByType(type);
+    std::string name = inventory->getItemNameByType(type);
 
-    inventory.addItem(name, buff, type, duration);
+    inventory->addItem(name, buff, type, duration);
 }
 
 void Player::removeItemFromInventory(const std::string& name) {
-    inventory.removeItem(name);
+    inventory->removeItem(name);
 }
 
 void Player::displayInventory() const {
-    inventory.displayInventory();
+    inventory->displayInventory();
 }
 
 bool Player::inventoryIsEmpty() const {
-    return inventory.isEmpty();
+    return inventory->isEmpty();
 }
 
 void Player::useItem(int index) {
@@ -189,13 +190,13 @@ void Player::render(sf::RenderTarget & target) {
 }
 
 Item Player::getItemInUse() const {
-    return inventory.getItemByIndex(this->item_in_use);
+    return inventory->getItemByIndex(this->item_in_use);
 }
 
 void Player::decrementItemDuration() {
-    inventory.decrementDuration(this->item_in_use);
+    inventory->decrementDuration(this->item_in_use);
 }
 
 int Player::getInventorySize() {
-    return inventory.getSize();
+    return inventory->getSize();
 }

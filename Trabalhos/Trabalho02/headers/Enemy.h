@@ -9,16 +9,16 @@ enum EnemyType {
 
 enum Enemies {
     GREEN_SLIME = 1,
-    RED_SLIME = 2,
-    BLUE_SLIME = 3,
-    CURSED_GREEN_SLIME = 4,
-    FLYING_DEMON = 5,
-    FLYING_EYE = 6,
-    MUSHROOM =  7,
-    CURSED_MUSHROOM = 8,
-    SKELETON_WARRIOR = 9,
-    CURSED_SKELETON = 10,
-    GOBLIN = 11,
+//    RED_SLIME = 2,
+//    BLUE_SLIME = 3,
+    CURSED_GREEN_SLIME = 2,
+    FLYING_DEMON = 3,
+    FLYING_EYE = 4,
+    MUSHROOM =  5,
+    CURSED_MUSHROOM = 6,
+    SKELETON_WARRIOR = 7,
+    CURSED_SKELETON = 8,
+    GOBLIN = 9,
 };
 
 enum Bosses {
@@ -26,7 +26,7 @@ enum Bosses {
     NECROMANCER = 2,
     KNIGHT = 3,
     NIGHT_BORNE = 4,
-    BRINGER_OF_DEATH = 5
+//    BRINGER_OF_DEATH = 5
 };
 
 class Enemy {

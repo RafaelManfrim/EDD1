@@ -27,7 +27,7 @@ private:
     float acceleration;
     float drag;
 
-    Inventory inventory;
+    Inventory *inventory;
 
     int item_in_use;
 
@@ -38,8 +38,10 @@ private:
     void initPhysics();
 
 public:
-    Player(int &gender, int &life, int &attack, int &defense, int &luck);
+    Player(Util* util, int &gender, int &life, int &attack, int &defense, int &luck);
     virtual ~Player();
+
+    Util* util;
 
     int &gender, &life, &attack, &defense, &luck;
 

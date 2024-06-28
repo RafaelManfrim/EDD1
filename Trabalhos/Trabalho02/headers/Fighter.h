@@ -1,9 +1,13 @@
 #pragma once
 
+#include "Util.h"
+
 class Fighter {
 public:
-    Fighter(int &life, int &attack, int &defense, int &luck, int fighter_id);
+    Fighter(Util* util, int &life, int &attack, int &defense, int &luck, int fighter_id);
     ~Fighter();
+
+    Util* util;
 
     void performAttack(Fighter &defender, int &dodges, int &special_attacks);
 

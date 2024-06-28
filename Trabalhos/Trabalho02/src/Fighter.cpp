@@ -1,11 +1,9 @@
-#include <iostream>
 #include <random>
-#include <unistd.h>
 
 #include "../headers/Fighter.h"
 
-Fighter::Fighter(int &life, int &attack, int &defense, int &luck, int fighter_id):
-    life(life), attack(attack), defense(defense), luck(luck), fighter_id(fighter_id) {
+Fighter::Fighter(Util* util, int &life, int &attack, int &defense, int &luck, int fighter_id):
+    util(util), life(life), attack(attack), defense(defense), luck(luck), fighter_id(fighter_id) {
     this->remaining_life = 100 + life * 20;
     this->remaining_bleeding_rounds = 0;
     this->total_damage_dealt = 0;
@@ -278,11 +276,10 @@ void Fighter::performAttack(Fighter &defender, int &dodges, int &special_attacks
     if(dodge == 0) {
         dodges++;
         if(this->fighter_id == 1) {
-            std::cout << "Você ataca, mas o inimigo desviou..." << std::endl;
+            this->util->addTextToList("Voce ataca, mas o inimigo desviou...");
         } else {
-            std::cout << "O inimigo ataca, mas você desviou..." << std::endl;
+            this->util->addTextToList("O inimigo ataca, mas voce desviou...");
         }
-        sleep(1);
         return;
     }
 
@@ -298,11 +295,10 @@ void Fighter::performAttack(Fighter &defender, int &dodges, int &special_attacks
     if(special_attack == 0) {
         special_attacks++;
         if(this->fighter_id == 1) {
-            std::cout << "Você ataca com um ataque especial..." << std::endl;
+            this->util->addTextToList("Voce ataca com um ataque especial...");
         } else {
-            std::cout << "O inimigo ataca com um ataque especial..." << std::endl;
+            this->util->addTextToList("O inimigo ataca com um ataque especial...");
         }
-        sleep(1);
         damage = ceil(damage + damage * 0.4);
 
         std::uniform_int_distribution<int> bleeding_chance(0,2);
@@ -310,18 +306,15 @@ void Fighter::performAttack(Fighter &defender, int &dodges, int &special_attacks
         if(bleeding == 0) {
             std::uniform_int_distribution<int> bleeding_turns_chance(2,6);
             int bleeding_turns = bleeding_turns_chance(generator);
-            std::cout << "O ataque especial causou sangramento de: " << bleeding_turns << " turnos" << std::endl;
-            sleep(1);
+            this->util->addTextToList("O ataque especial causou sangramento de: " + std::to_string(bleeding_turns) + " turnos");
             defender.applyBleeding(bleeding_turns);
         }
     } else {
         if(this->fighter_id == 1) {
-            std::cout << "Você ataca..." << std::endl;
+            this->util->addTextToList("Voce ataca...");
         } else {
-            std::cout << "O inimigo ataca..." << std::endl;
+            this->util->addTextToList("O inimigo ataca...");
         }
-
-        sleep(1);
     }
 
     defender.takeDamage(damage);

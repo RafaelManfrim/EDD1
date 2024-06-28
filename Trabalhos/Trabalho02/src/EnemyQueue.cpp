@@ -6,8 +6,8 @@
 
 void EnemyQueue::initQueue(int size) {
     std::random_device generator;
-    std::uniform_int_distribution<int> available_enemies(1, 11);
-    std::uniform_int_distribution<int> available_bosses(1, 5);
+    std::uniform_int_distribution<int> available_enemies(1, 9);
+    std::uniform_int_distribution<int> available_bosses(1, 4);
 
     for (int i = 1; i <= size; i++) {
         int enemy_id_draw = available_enemies(generator);
